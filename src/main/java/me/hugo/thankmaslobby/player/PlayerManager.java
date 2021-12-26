@@ -1,4 +1,4 @@
-package me.hugo.kweebecparty.player;
+package me.hugo.thankmaslobby.player;
 
 import net.minestom.server.entity.Player;
 

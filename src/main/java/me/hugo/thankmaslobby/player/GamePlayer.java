@@ -1,14 +1,10 @@
-package me.hugo.kweebecparty.player;
+package me.hugo.thankmaslobby.player;
 
-import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerSkin;
-import net.minestom.server.item.metadata.WrittenBookMeta;
 import net.minestom.server.scoreboard.Sidebar;
 
 public class GamePlayer {
