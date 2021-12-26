@@ -1,5 +1,10 @@
 package me.hugo.kweebecparty;
 
+import io.github.bloepiloepi.pvp.PvpExtension;
+import io.github.bloepiloepi.pvp.events.LegacyKnockbackEvent;
+import io.github.bloepiloepi.pvp.legacy.LegacyKnockbackSettings;
+import me.hugo.kweebecparty.player.GamePlayer;
+import me.hugo.kweebecparty.player.PlayerManager;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
@@ -15,6 +20,7 @@ import net.minestom.server.entity.PlayerSkin;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerBlockInteractEvent;
 import net.minestom.server.event.player.PlayerLoginEvent;
+import net.minestom.server.extras.MojangAuth;
 import net.minestom.server.instance.*;
 import net.minestom.server.instance.batch.ChunkBatch;
 import net.minestom.server.instance.block.Block;
@@ -22,37 +28,55 @@ import net.minestom.server.inventory.Inventory;
 import net.minestom.server.inventory.InventoryType;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
+import net.minestom.server.scoreboard.BelowNameTag;
+import net.minestom.server.utils.mojang.MojangUtils;
 import net.minestom.server.world.biomes.Biome;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public class KweebecParty {
+
+    private static KweebecParty main;
+    private PlayerManager playerManager;
 
     public static void main(String[] args) {
         // Initialization
         MinecraftServer minecraftServer = MinecraftServer.init();
+        main = new KweebecParty();
+        MojangAuth.init();
 
         InstanceManager instanceManager = MinecraftServer.getInstanceManager();
         InstanceContainer instanceContainer = instanceManager.createInstanceContainer();
         instanceContainer.setChunkGenerator(new GeneratorDemo());
 
+        LegacyKnockbackSettings settings = LegacyKnockbackSettings.builder()
+                .horizontal(0.4)
+                .vertical(0.4)
+                .verticalLimit(0.4)
+                .extraHorizontal(0.48)
+                .extraVertical(0.1)
+                .build();
+        MinecraftServer.getGlobalEventHandler().addListener(LegacyKnockbackEvent.class,
+                event -> event.setSettings(settings));
+
         // Add an event callback to specify the spawning instance (and the spawn position)
         GlobalEventHandler globalEventHandler = MinecraftServer.getGlobalEventHandler();
         globalEventHandler.addChild(PvpExtension.legacyEvents());
 
+        main.init();
+
         globalEventHandler.addListener(PlayerLoginEvent.class, event -> {
             final Player player = event.getPlayer();
             player.setGameMode(GameMode.SURVIVAL);
-            PvpExtension.setLegacyAttack(event.getPlayer(), true);
 
             System.out.println(player.getUsername() + " joined.");
             event.setSpawningInstance(instanceContainer);
             player.setRespawnPoint(new Pos(0, 42, 0));
 
-            /* Set Players Skin */
-            player.setSkin(PlayerSkin.fromUsername(player.getUsername()));
+            GamePlayer gamePlayer = main.getPlayerManager().getPlayerData(player);
         });
 
         Notification notification = new Notification(
@@ -79,6 +103,18 @@ public class KweebecParty {
 
         // Start the server on port 25565
         minecraftServer.start("0.0.0.0", 25565);
+    }
+
+    private void init() {
+        playerManager = new PlayerManager();
+    }
+
+    public static KweebecParty getInstance() {
+        return main;
+    }
+
+    public PlayerManager getPlayerManager() {
+        return playerManager;
     }
 
     private static class GeneratorDemo implements ChunkGenerator {
