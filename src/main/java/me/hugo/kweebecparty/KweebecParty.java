@@ -1,8 +1,5 @@
 package me.hugo.kweebecparty;
 
-import io.github.bloepiloepi.pvp.PvpExtension;
-import io.github.bloepiloepi.pvp.events.LegacyKnockbackEvent;
-import io.github.bloepiloepi.pvp.legacy.LegacyKnockbackSettings;
 import me.hugo.kweebecparty.player.GamePlayer;
 import me.hugo.kweebecparty.player.PlayerManager;
 import net.kyori.adventure.key.Key;
@@ -52,19 +49,8 @@ public class KweebecParty {
         InstanceContainer instanceContainer = instanceManager.createInstanceContainer();
         instanceContainer.setChunkGenerator(new GeneratorDemo());
 
-        LegacyKnockbackSettings settings = LegacyKnockbackSettings.builder()
-                .horizontal(0.4)
-                .vertical(0.4)
-                .verticalLimit(0.4)
-                .extraHorizontal(0.48)
-                .extraVertical(0.1)
-                .build();
-        MinecraftServer.getGlobalEventHandler().addListener(LegacyKnockbackEvent.class,
-                event -> event.setSettings(settings));
-
         // Add an event callback to specify the spawning instance (and the spawn position)
         GlobalEventHandler globalEventHandler = MinecraftServer.getGlobalEventHandler();
-        globalEventHandler.addChild(PvpExtension.legacyEvents());
 
         main.init();
 
