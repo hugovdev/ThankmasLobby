@@ -40,9 +40,12 @@ public class KweebecParty {
 
         // Add an event callback to specify the spawning instance (and the spawn position)
         GlobalEventHandler globalEventHandler = MinecraftServer.getGlobalEventHandler();
+        globalEventHandler.addChild(PvpExtension.legacyEvents());
+
         globalEventHandler.addListener(PlayerLoginEvent.class, event -> {
             final Player player = event.getPlayer();
             player.setGameMode(GameMode.SURVIVAL);
+            PvpExtension.setLegacyAttack(event.getPlayer(), true);
 
             System.out.println(player.getUsername() + " joined.");
             event.setSpawningInstance(instanceContainer);

@@ -36,6 +36,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.Bloepiloepi</groupId>
+            <artifactId>MinestomPvP</artifactId>
+            <version>178da39</version>
+        </dependency>
     </dependencies>
 
     <build>
