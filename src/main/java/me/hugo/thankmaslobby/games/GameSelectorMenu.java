@@ -1,5 +1,7 @@
 package me.hugo.thankmaslobby.games;
 
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -32,6 +34,7 @@ public class GameSelectorMenu {
 
                 player.sendMessage(Component.text("Sending you to " + selectedGame.getGameName() + "... ").color(NamedTextColor.GREEN)
                         .append(Component.text("(Hover for More)").color(NamedTextColor.YELLOW).hoverEvent(hoverMessage)));
+                player.playSound(Sound.sound(Key.key("minecraft:block.bamboo.fall"), Sound.Source.AMBIENT, 1.0f, 1.0f));
                 /*
                 TODO: Actually send the player lol.
                  */
@@ -41,6 +44,7 @@ public class GameSelectorMenu {
     }
 
     public void openMenu(Player player) {
+        player.playSound(Sound.sound(Key.key("minecraft:block.amethyst_block.hit"), Sound.Source.AMBIENT, 1.0f, 1.0f));
         player.openInventory(gameSelectorMenu);
     }
 

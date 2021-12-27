@@ -10,12 +10,10 @@ import net.minestom.server.advancements.FrameType;
 import net.minestom.server.advancements.notifications.Notification;
 import net.minestom.server.advancements.notifications.NotificationCenter;
 import net.minestom.server.coordinate.Pos;
-import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerLoginEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
-import net.minestom.server.event.player.PlayerUseItemEvent;
 import net.minestom.server.instance.*;
 import net.minestom.server.instance.batch.ChunkBatch;
 import net.minestom.server.instance.block.Block;
@@ -44,11 +42,10 @@ public class PlayerJoin {
 
         globalEventHandler.addListener(PlayerLoginEvent.class, event -> {
             final Player player = event.getPlayer();
+            GamePlayer gamePlayer = thankmasLobby.getPlayerManager().getPlayerData(player);
 
             event.setSpawningInstance(instanceContainer);
             player.setRespawnPoint(new Pos(0, 42, 0));
-
-            GamePlayer gamePlayer = thankmasLobby.getPlayerManager().getPlayerData(player);
         });
 
         globalEventHandler.addListener(PlayerSpawnEvent.class, event -> {
@@ -70,6 +67,8 @@ public class PlayerJoin {
 
             for (HotBarItem hotBarItem : HotBarItem.values())
                 player.getInventory().setItemStack(hotBarItem.getSlot(), hotBarItem.getItem());
+
+            player.setAllowFlying(true);
         });
     }
 

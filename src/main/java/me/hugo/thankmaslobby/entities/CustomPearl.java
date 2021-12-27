@@ -13,7 +13,8 @@ public class CustomPearl extends EntityProjectile {
 
     @Override
     public void onStuck() {
-        remove();
         removePassenger(getShooter());
+        remove();
+        getShooter().teleport(getShooter().getPosition().add(0, 1, 0));
     }
 }
