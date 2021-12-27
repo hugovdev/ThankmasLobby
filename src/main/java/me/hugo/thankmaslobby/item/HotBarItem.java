@@ -1,9 +1,13 @@
 package me.hugo.thankmaslobby.item;
 
 import me.hugo.thankmaslobby.ThankmasLobby;
+import me.hugo.thankmaslobby.entities.CustomPearl;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.minestom.server.coordinate.Vec;
+import net.minestom.server.entity.Entity;
+import net.minestom.server.entity.EntityType;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 
@@ -45,7 +49,18 @@ public enum HotBarItem {
                     Component.text(""),
                     Component.text("Click to shoot!").color(NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false))
     ), player -> {
+        Entity vehicle = player.getVehicle();
 
+        if (vehicle != null && vehicle instanceof CustomPearl) {
+            vehicle.removePassenger(player);
+            vehicle.remove();
+        }
+
+        Entity enderPearl = new CustomPearl(player, EntityType.ENDER_PEARL);
+        enderPearl.setInstance(player.getInstance(), player.getPosition().add(0, 1, 0));
+        enderPearl.setVelocity(player.getPosition().direction().mul(40));
+        enderPearl.setGlowing(true);
+        enderPearl.addPassenger(player);
     }, 4);
 
     private ItemStack item;
@@ -59,8 +74,8 @@ public enum HotBarItem {
     }
 
     public static HotBarItem fromItem(ItemStack itemStack) {
-        for(HotBarItem item : HotBarItem.values()) {
-            if(item.getItem() == itemStack) {
+        for (HotBarItem item : HotBarItem.values()) {
+            if (item.getItem() == itemStack) {
                 return item;
             }
         }
