@@ -66,14 +66,14 @@ public enum HotBarItem {
         enderPearl.setGlowing(true);
         enderPearl.addPassenger(player);
     }, 4),
-    SETTINGS(ItemStack.of(Material.COMPARATOR).withDisplayName(Component.text("Settings").color(NamedTextColor.GREEN)
+    SETTINGS(ItemStack.of(Material.COMPARATOR).withDisplayName(Component.text("Options").color(NamedTextColor.GREEN)
             .append(Component.text(" (Right Click)").color(NamedTextColor.GRAY)).decoration(TextDecoration.ITALIC, false)).withLore(
             Arrays.asList(Component.text("Change lobby settings like").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
                     Component.text("visibility, particles and more!").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
                     Component.text(""),
                     Component.text("Click to open!").color(NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false))
     ), player -> {
-        //TODO: Open settings menu
+        player.openInventory(ThankmasLobby.getInstance().getPlayerManager().getPlayerData(player).getSettingsMenu());
     }, 7),
     LOBBY_SELECTOR(ItemStack.of(Material.NETHER_STAR).withDisplayName(Component.text("Lobby Selector").color(NamedTextColor.GREEN)
             .append(Component.text(" (Right Click)").color(NamedTextColor.GRAY)).decoration(TextDecoration.ITALIC, false)).withLore(

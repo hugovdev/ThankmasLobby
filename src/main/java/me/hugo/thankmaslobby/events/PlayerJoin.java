@@ -65,10 +65,7 @@ public class PlayerJoin {
                 inventoryConditionResult.setCancel(true);
             });
 
-            for (HotBarItem hotBarItem : HotBarItem.values())
-                player.getInventory().setItemStack(hotBarItem.getSlot(), hotBarItem.getItem());
-
-            player.setAllowFlying(true);
+            for (HotBarItem hotBarItem : HotBarItem.values()) player.getInventory().setItemStack(hotBarItem.getSlot(), hotBarItem.getItem());
         });
     }
 

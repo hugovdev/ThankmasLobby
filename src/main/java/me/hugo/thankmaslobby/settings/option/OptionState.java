@@ -2,6 +2,7 @@ package me.hugo.thankmaslobby.settings.option;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 
@@ -24,8 +25,10 @@ public class OptionState {
         this.stateName = stateName;
         this.option = option;
 
-        this.menuIcon = ItemStack.of(stateIcon).withDisplayName(Component.text(stateName, stateColor)).withLore(option.getDescription(this, false));
-        this.toggleMenuIcon = ItemStack.of(stateToggleIcon).withDisplayName(Component.text(stateName, stateColor)).withLore(option.getDescription(this, true));
+        this.menuIcon = ItemStack.of(stateIcon).withDisplayName(Component.text(option.getName(), stateColor).decoration(TextDecoration.ITALIC, false))
+                .withLore(option.getDescription(this, false));
+        this.toggleMenuIcon = ItemStack.of(stateToggleIcon).withDisplayName(Component.text(option.getName(), stateColor).decoration(TextDecoration.ITALIC, false))
+                .withLore(option.getDescription(this, true));
     }
 
     public ItemStack getMenuIcon() {

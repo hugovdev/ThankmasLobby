@@ -12,31 +12,34 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FlyOption implements Option {
+public class VisibilityOption implements Option {
+
     private List<OptionState> states;
 
-    public FlyOption() {
+    public VisibilityOption() {
         this.states = new ArrayList<>();
-        this.states.add(new OptionState(0, Material.FEATHER, NamedTextColor.RED, Material.RED_STAINED_GLASS_PANE, "OFF", this));
-        this.states.add(new OptionState(1, Material.FEATHER, NamedTextColor.GREEN, Material.LIME_STAINED_GLASS_PANE, "ON", this));
+        this.states.add(new OptionState(0, Material.ENDER_EYE, NamedTextColor.GREEN, Material.LIME_STAINED_GLASS_PANE, "ON", this));
+        this.states.add(new OptionState(1, Material.ENDER_PEARL, NamedTextColor.RED, Material.RED_STAINED_GLASS_PANE, "OFF", this));
     }
 
     @Override
     public boolean run(GamePlayer playerData, OptionState state, boolean inventoryClick) {
-        boolean isEnabled = state.getStateId() == 1;
-        playerData.getPlayer().sendMessage(Component.text("You ", NamedTextColor.YELLOW)
-                .append(Component.text((isEnabled ? "enabled" : "disabled"), isEnabled ? NamedTextColor.GREEN : NamedTextColor.RED))
-                .append(Component.text(" your flight!", NamedTextColor.YELLOW)));
+        boolean isHiding = state.getStateId() == 1;
 
-        playerData.getPlayer().setAllowFlying(isEnabled);
-        playerData.getPlayer().setFlying(isEnabled);
+        playerData.getPlayer().sendMessage(Component.text("You have ", NamedTextColor.YELLOW)
+                .append(Component.text((isHiding ? "hidden" : "shown"), isHiding ? NamedTextColor.RED : NamedTextColor.GREEN))
+                .append(Component.text(" players!", NamedTextColor.YELLOW)));
+
+        /*
+        TODO: Manage player visibility.
+         */
 
         return true;
     }
 
     @Override
     public String getId() {
-        return "fly";
+        return "visibility";
     }
 
     @Override
@@ -46,20 +49,20 @@ public class FlyOption implements Option {
 
     @Override
     public String getName() {
-        return "Flight Mode";
+        return "Player Visibility";
     }
 
     @Override
     public List<Component> getDescription(OptionState state, boolean isGlassPane) {
-        return Arrays.asList(Component.text("Enable or disable your", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
-                Component.text("ability to fly!", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
+        return Arrays.asList(Component.text("Enable or disable player", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
+                Component.text("visibility on the lobby!", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
                 Component.text(""),
                 isGlassPane ? Component.text(state.getStateName(), state.getStateColor()).decoration(TextDecoration.ITALIC, false) : Component.text("Click to change!", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
     }
 
     @Override
     public int getSlot() {
-        return 14;
+        return 10;
     }
 
     @Override
