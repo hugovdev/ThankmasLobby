@@ -3,41 +3,30 @@ package me.hugo.thankmaslobby;
 import me.hugo.thankmaslobby.cosmetics.menus.CosmeticsMenu;
 import me.hugo.thankmaslobby.events.*;
 import me.hugo.thankmaslobby.games.GameSelectorMenu;
-import me.hugo.thankmaslobby.item.HotBarItem;
-import me.hugo.thankmaslobby.player.GamePlayer;
+import me.hugo.thankmaslobby.lobbynpc.ServerJoinNPC;
 import me.hugo.thankmaslobby.player.PlayerManager;
 import me.hugo.thankmaslobby.settings.OptionManager;
+import me.hugo.thankmaslobby.world.EmptyGenerator;
 import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.MinecraftServer;
-import net.minestom.server.advancements.FrameType;
-import net.minestom.server.advancements.notifications.Notification;
-import net.minestom.server.advancements.notifications.NotificationCenter;
-import net.minestom.server.coordinate.Pos;
-import net.minestom.server.entity.GameMode;
+import net.minestom.server.adventure.audience.Audiences;
 import net.minestom.server.entity.Player;
-import net.minestom.server.entity.PlayerSkin;
 import net.minestom.server.event.GlobalEventHandler;
-import net.minestom.server.event.player.PlayerBlockInteractEvent;
-import net.minestom.server.event.player.PlayerDisconnectEvent;
-import net.minestom.server.event.player.PlayerLoginEvent;
-import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.extras.MojangAuth;
-import net.minestom.server.instance.*;
-import net.minestom.server.instance.batch.ChunkBatch;
-import net.minestom.server.instance.block.Block;
-import net.minestom.server.inventory.click.ClickType;
-import net.minestom.server.inventory.condition.InventoryCondition;
-import net.minestom.server.inventory.condition.InventoryConditionResult;
-import net.minestom.server.item.ItemStack;
-import net.minestom.server.item.Material;
-import net.minestom.server.world.biomes.Biome;
-import org.jetbrains.annotations.NotNull;
+import net.minestom.server.instance.InstanceContainer;
+import net.minestom.server.instance.InstanceManager;
+import net.minestom.server.monitoring.BenchmarkManager;
+import net.minestom.server.monitoring.TickMonitor;
+import net.minestom.server.utils.MathUtils;
+import net.minestom.server.utils.NamespaceID;
+import net.minestom.server.utils.time.TimeUnit;
+import net.minestom.server.world.DimensionType;
 
-import java.util.Arrays;
-import java.util.List;
+import java.time.Duration;
+import java.util.Collection;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ThankmasLobby {
 
@@ -53,18 +42,21 @@ public class ThankmasLobby {
     public static void main(String[] args) {
         MinecraftServer minecraftServer = MinecraftServer.init();
         main = new ThankmasLobby();
+
         MojangAuth.init();
-
-        GlobalEventHandler globalEventHandler = MinecraftServer.getGlobalEventHandler();
-
         main.initManagers();
-        main.welcomeBook = Book.builder().addPage(Component.text("Welcome to Thankmas 2022!").decorate(TextDecoration.BOLD).decorate(TextDecoration.UNDERLINED)
-                        .append(Component.text("\n\nLet's play together and have fun while fighting for a great cause!").decoration(TextDecoration.BOLD, false).decoration(TextDecoration.UNDERLINED, false)
+        main.initMainWorld();
+
+        main.welcomeBook = Book.builder().addPage(Component.text("Welcome to Thankmas 2022!").decorate(TextDecoration.BOLD)
+                        .decorate(TextDecoration.UNDERLINED)
+                        .append(Component.text("\n\nLet's play together and have fun while fighting for a great cause!")
+                                .decoration(TextDecoration.BOLD, false).decoration(TextDecoration.UNDERLINED, false)
                                 .append(Component.text("\n\nMore information about the server on the next pages!\n\n\nKweebec Party →"))
                         )
                 ).addPage(Component.text("KWEEBEC PARTY")
                         .decorate(TextDecoration.BOLD).decorate(TextDecoration.UNDERLINED)
-                        .append(Component.text("\n\nPlay quick Hytale-themed minigames and get the most points to win!").decoration(TextDecoration.BOLD, false).decoration(TextDecoration.UNDERLINED, false)))
+                        .append(Component.text("\n\nPlay quick Hytale-themed minigames and get the most points to win!")
+                                .decoration(TextDecoration.BOLD, false).decoration(TextDecoration.UNDERLINED, false)))
                 .author(Component.text("Thankmas 2022")).build();
 
         getInstance().gameSelectorMenu = new GameSelectorMenu();
@@ -73,18 +65,65 @@ public class ThankmasLobby {
         /*
         Load all the listeners
          */
+        GlobalEventHandler globalEventHandler = MinecraftServer.getGlobalEventHandler();
+
         new PlayerInteraction(globalEventHandler);
         new PlayerJoin(globalEventHandler);
         new BlockEvents(globalEventHandler);
         new PlayerLeave(globalEventHandler);
         new PlayerSwitchHands(globalEventHandler);
+        new EntityInteraction(globalEventHandler);
 
         minecraftServer.start("0.0.0.0", 25565);
+
+        for (ServerJoinNPC lobbyNPC : ServerJoinNPC.values())
+            System.out.println("[NPC] '" + lobbyNPC.getServerName() + "' has been registered!");
+
+        getInstance().startBenchmark();
+    }
+
+    private final NamespaceID DIMENSION_ID = NamespaceID.from("thankmas:lobby_world");
+    public final DimensionType DIMENSION_TYPE = DimensionType.builder(DIMENSION_ID).ambientLight(1.0f).build();
+
+    private void initMainWorld() {
+        if (!MinecraftServer.getDimensionTypeManager().isRegistered(DIMENSION_ID))
+            MinecraftServer.getDimensionTypeManager().addDimension(DIMENSION_TYPE);
+
+        InstanceManager instanceManager = MinecraftServer.getInstanceManager();
+        InstanceContainer instanceContainer = instanceManager.createInstanceContainer(DIMENSION_TYPE);
+        instanceContainer.setChunkGenerator(new EmptyGenerator());
+
+        MinecraftServer.getInstanceManager().registerInstance(instanceContainer);
+        instanceContainer.loadChunk(0, 0).join();
     }
 
     private void initManagers() {
         playerManager = new PlayerManager();
         optionManager = new OptionManager();
+    }
+
+    private void startBenchmark() {
+        BenchmarkManager benchmarkManager = MinecraftServer.getBenchmarkManager();
+        benchmarkManager.enable(Duration.ofMillis(Long.MAX_VALUE));
+
+        AtomicReference<TickMonitor> lastTick = new AtomicReference<>();
+        MinecraftServer.getUpdateManager().addTickMonitor(lastTick::set);
+
+        MinecraftServer.getSchedulerManager().buildTask(() -> {
+            Collection<Player> players = MinecraftServer.getConnectionManager().getOnlinePlayers();
+            if (players.isEmpty())
+                return;
+
+            long ramUsage = benchmarkManager.getUsedMemory();
+            ramUsage /= 1e6; // bytes to MB
+
+            TickMonitor tickMonitor = lastTick.get();
+            final Component header = Component.text("RAM USAGE: " + ramUsage + " MB")
+                    .append(Component.newline())
+                    .append(Component.text("TICK TIME: " + MathUtils.round(tickMonitor.getTickTime(), 2) + "ms"));
+            final Component footer = benchmarkManager.getCpuMonitoringMessage();
+            Audiences.players().sendPlayerListHeaderAndFooter(header, footer);
+        }).repeat(10, TimeUnit.SERVER_TICK).schedule();
     }
 
     public Book getWelcomeBook() {

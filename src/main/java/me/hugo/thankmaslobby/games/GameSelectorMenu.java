@@ -25,19 +25,7 @@ public class GameSelectorMenu {
 
             if (selectedGame != null) {
                 player.closeInventory();
-                TextComponent hoverMessage = Component.text(selectedGame.getGameName() + "\n").color(NamedTextColor.GREEN)
-                        .append(Component.text("Server Stats\n\n").color(NamedTextColor.GRAY))
-                        .append(Component.text("Players in queue: ")
-                        .color(NamedTextColor.YELLOW).append(Component.text("0\n").color(NamedTextColor.GRAY)))
-                        .append(Component.text("Players: ")
-                                .color(NamedTextColor.YELLOW).append(Component.text("0/100").color(NamedTextColor.GRAY)));
-
-                player.sendMessage(Component.text("Sending you to " + selectedGame.getGameName() + "... ").color(NamedTextColor.GREEN)
-                        .append(Component.text("(Hover for More)").color(NamedTextColor.YELLOW).hoverEvent(hoverMessage)));
-                player.playSound(Sound.sound(Key.key("minecraft:block.bamboo.fall"), Sound.Source.AMBIENT, 1.0f, 1.0f));
-                /*
-                TODO: Actually send the player lol.
-                 */
+                selectedGame.send(player);
             }
             inventoryConditionResult.setCancel(true);
         });

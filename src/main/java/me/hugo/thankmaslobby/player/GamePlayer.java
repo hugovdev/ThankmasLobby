@@ -4,9 +4,12 @@ import me.hugo.thankmaslobby.ThankmasLobby;
 import me.hugo.thankmaslobby.settings.OptionManager;
 import me.hugo.thankmaslobby.settings.option.Option;
 import me.hugo.thankmaslobby.settings.option.OptionState;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerSkin;
 import net.minestom.server.inventory.Inventory;
@@ -70,6 +73,9 @@ public class GamePlayer {
 
                     settingsMenu.setItemStack(option.getSlot(), newOptionState.getMenuIcon());
                     settingsMenu.setItemStack(option.getSlot() + 9, newOptionState.getToggleMenuIcon());
+
+                    player.playSound(Sound.sound(Key.key("minecraft:block.note_block.hat"), Sound.Source.AMBIENT, 1.0f, 1.0f));
+                    break;
                 }
             }
         });
@@ -78,7 +84,10 @@ public class GamePlayer {
     public void loadSidebar() {
         String pattern = "MM/dd/yyyy";
         SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+        int onlinePlayers = MinecraftServer.getConnectionManager().getOnlinePlayers().size();
+
         scoreboard = new Sidebar(Component.text("THANKMAS").color(NamedTextColor.AQUA).decorate(TextDecoration.BOLD));
+
         scoreboard.createLine(new Sidebar.ScoreboardLine("date", Component.text(dateFormat.format(new Date())).color(NamedTextColor.GRAY), 12));
         scoreboard.createLine(new Sidebar.ScoreboardLine("space1", Component.text(""), 11));
         scoreboard.createLine(new Sidebar.ScoreboardLine("rank", Component.text("Rank: ").color(NamedTextColor.WHITE)
@@ -87,7 +96,7 @@ public class GamePlayer {
         scoreboard.createLine(new Sidebar.ScoreboardLine("lobbyCounter", Component.text("Lobby: ").color(NamedTextColor.WHITE)
                 .append(Component.text("#1").color(NamedTextColor.GREEN)), 8));
         scoreboard.createLine(new Sidebar.ScoreboardLine("lobbyPlayerCounter", Component.text("Players: ").color(NamedTextColor.WHITE)
-                .append(Component.text("0").color(NamedTextColor.GREEN)), 7));
+                .append(Component.text(onlinePlayers).color(NamedTextColor.GREEN)), 7));
         scoreboard.createLine(new Sidebar.ScoreboardLine("space3", Component.text("", NamedTextColor.RED), 6));
         scoreboard.createLine(new Sidebar.ScoreboardLine("playerCounter", Component.text("Global Players: ").color(NamedTextColor.WHITE)
                 .append(Component.text("0").color(NamedTextColor.GREEN)), 5));
@@ -98,6 +107,10 @@ public class GamePlayer {
         scoreboard.createLine(new Sidebar.ScoreboardLine("ip", Component.text("events.thoriumcu.be").color(NamedTextColor.YELLOW), 1));
 
         scoreboard.addViewer(player);
+    }
+
+    public Sidebar getScoreboard() {
+        return scoreboard;
     }
 
     public Inventory getSettingsMenu() {

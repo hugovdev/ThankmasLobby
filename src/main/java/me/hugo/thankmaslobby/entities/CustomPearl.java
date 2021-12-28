@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CustomPearl extends EntityProjectile {
+
     public CustomPearl(@Nullable Entity shooter, @NotNull EntityType entityType) {
         super(shooter, entityType);
     }
@@ -17,4 +18,5 @@ public class CustomPearl extends EntityProjectile {
         remove();
         getShooter().teleport(getShooter().getPosition().add(0, 1, 0));
     }
+
 }

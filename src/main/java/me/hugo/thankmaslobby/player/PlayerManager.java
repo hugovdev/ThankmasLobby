@@ -24,6 +24,10 @@ public class PlayerManager {
         }
     }
 
+    public HashMap<UUID, GamePlayer> getPlayerStorage() {
+        return playerStorage;
+    }
+
     public void removePlayerData(Player player) {
         playerStorage.remove(player.getUuid());
     }

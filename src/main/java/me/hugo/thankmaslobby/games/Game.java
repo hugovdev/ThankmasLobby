@@ -1,8 +1,12 @@
 package me.hugo.thankmaslobby.games;
 
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerSkin;
 import net.minestom.server.item.*;
 import net.minestom.server.item.metadata.PlayerHeadMeta;
@@ -29,8 +33,7 @@ public enum Game {
 
     CREATIVE(ItemStack.builder(Material.ARMOR_STAND), "Creative", "creative",
             Arrays.asList(Component.text("Build amazing creations and buildings").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
-                    Component.text("on the new creative!").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)), 15),
-    ;
+                    Component.text("on the new creative!").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)), 15);
 
 
     private final ItemStackBuilder icon;
@@ -54,6 +57,22 @@ public enum Game {
             }
         }
         return null;
+    }
+
+    public void send(Player player) {
+        TextComponent hoverMessage = Component.text(this.gameName + "\n").color(NamedTextColor.GREEN)
+                .append(Component.text("Server Stats\n\n").color(NamedTextColor.GRAY))
+                .append(Component.text("Players in queue: ")
+                        .color(NamedTextColor.YELLOW).append(Component.text("0\n").color(NamedTextColor.GRAY)))
+                .append(Component.text("Players: ")
+                        .color(NamedTextColor.YELLOW).append(Component.text("0/100").color(NamedTextColor.GRAY)));
+
+        player.sendMessage(Component.text("Sending you to " + this.gameName + "... ").color(NamedTextColor.GREEN)
+                .append(Component.text("(Hover for More)").color(NamedTextColor.YELLOW).hoverEvent(hoverMessage)));
+
+        player.playSound(Sound.sound(Key.key("minecraft:block.bamboo.fall"), Sound.Source.AMBIENT, 1.0f, 1.0f));
+
+        /* TODO: Actually send the player lol. */
     }
 
     public int getSlot() {
