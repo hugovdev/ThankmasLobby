@@ -67,10 +67,11 @@ public enum Game {
         if (gamePlayer.isDonator(null)) {
             TextComponent hoverMessage = Component.text(this.gameName + "\n").color(NamedTextColor.GREEN)
                     .append(Component.text("Server Stats\n\n").color(NamedTextColor.GRAY))
-                    .append(Component.text("Players in queue: ")
-                            .color(NamedTextColor.WHITE).append(Component.text("0\n").color(NamedTextColor.GRAY)))
-                    .append(Component.text("Players: ")
-                            .color(NamedTextColor.WHITE).append(Component.text("0/100").color(NamedTextColor.GRAY)));
+                    .append(Component.text("Players in queue: ").color(NamedTextColor.WHITE)
+                            .append(Component.text("0\n").color(NamedTextColor.GRAY)))
+                    .append(Component.text("Players: ").color(NamedTextColor.WHITE)
+                            .append(Component.text("0/100").color(NamedTextColor.GRAY))
+                            .append(Component.text("\n\nClick to cancel!", NamedTextColor.YELLOW)));
 
             player.sendMessage(Component.text("Sending you to " + this.gameName + "... ").color(NamedTextColor.GREEN)
                     .append(Component.text("(Hover for More)").color(NamedTextColor.YELLOW).hoverEvent(hoverMessage)));

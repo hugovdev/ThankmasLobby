@@ -16,6 +16,8 @@ import net.minestom.server.entity.PlayerSkin;
 import net.minestom.server.entity.hologram.Hologram;
 import net.minestom.server.instance.Instance;
 
+import java.util.function.Consumer;
+
 public enum EasterEggNPC {
 
     KWEEBEC_CORNER(0, "Kweebec Corner", PlayerSkin.fromUsername("KweebecCorner"), new Pos(-6.5, 40, 14.5, -90, 0), "Stay safe and keep free!"),
@@ -39,36 +41,38 @@ public enum EasterEggNPC {
 
         Instance instance = MinecraftServer.getInstanceManager().getInstances().iterator().next();
 
-        this.npc = new NPC(instance, this.npcPosition, this.npcSkin, TriState.TRUE, npcInteraction -> {
+        this.npc = new NPC(instance, this.npcPosition, this.npcSkin, TriState.TRUE, getNPCInteraction());
+        spawnHolograms(instance);
+    }
+
+    private Consumer<NPC.NPCInteraction> getNPCInteraction() {
+        return npcInteraction -> {
             Player player = npcInteraction.player();
             GamePlayer gamePlayer = ThankmasLobby.getInstance().getPlayerManager().getPlayerData(player);
+            player.playSound(Sound.sound(Key.key("minecraft:entity.villager.yes"), Sound.Source.VOICE, 1.0f, 1.0f));
 
-            if (gamePlayer.getUnlockedNPCs().contains(this)) {
-                player.playSound(Sound.sound(Key.key("minecraft:entity.villager.no"), Sound.Source.VOICE, 1.0f, 1.0f));
-
-                player.sendMessage(Component.text("You already talked to ", NamedTextColor.RED)
-                        .append(Component.text(this.name, NamedTextColor.AQUA))
-                        .append(Component.text("!", NamedTextColor.RED)));
-            } else {
-                player.playSound(Sound.sound(Key.key("minecraft:entity.villager.yes"), Sound.Source.VOICE, 1.0f, 1.0f));
+            if (!gamePlayer.getUnlockedNPCs().contains(this)) {
                 player.playSound(Sound.sound(Key.key("minecraft:entity.player.levelup"), Sound.Source.AMBIENT, 1.0f, 1.0f));
 
+                gamePlayer.getUnlockedNPCs().add(this);
+                gamePlayer.updateEasterEggCounter();
+
                 Component hoverMessage = Component.text("NPC Quest", NamedTextColor.GREEN).append(Component.newline())
-                        .append(Component.text(""));
+                        .append(Component.text("Your Journey", NamedTextColor.GRAY).append(Component.newline()).append(Component.newline())
+                                .append(Component.text("Your NPCs: ", NamedTextColor.WHITE))
+                                .append(Component.text(gamePlayer.getUnlockedNPCs().size() + "/" + EasterEggNPC.values().length, NamedTextColor.GRAY))
+                                .append(Component.newline()).append(Component.newline())
+                                .append(Component.text("Click to see more!", NamedTextColor.YELLOW)));
 
                 player.sendMessage(Component.text("NEW NPC! ", NamedTextColor.YELLOW, TextDecoration.BOLD)
                         .append(Component.text("You unlocked ", NamedTextColor.YELLOW).decoration(TextDecoration.BOLD, false))
                         .append(Component.text(this.name + "'s ", NamedTextColor.AQUA).decoration(TextDecoration.BOLD, false))
                         .append(Component.text("NPC! ", NamedTextColor.YELLOW).decoration(TextDecoration.BOLD, false))
-                        .append(Component.text("HOVER", NamedTextColor.GREEN).decoration(TextDecoration.BOLD, true).hoverEvent(hoverMessage)));
-
-                player.sendMessage(Component.text("[NPC] " + this.name, NamedTextColor.GOLD).append(Component.text(": " + this.dialogue[0], NamedTextColor.WHITE)));
-
-                gamePlayer.getUnlockedNPCs().add(this);
-                gamePlayer.updateEasterEggCounter();
+                        .append(Component.text("CLICK", NamedTextColor.GREEN).decoration(TextDecoration.BOLD, true).hoverEvent(hoverMessage)));
             }
-        });
-        spawnHolograms(instance);
+
+            player.sendMessage(Component.text("[NPC] " + this.name, NamedTextColor.GOLD).append(Component.text(": " + this.dialogue[0], NamedTextColor.WHITE)));
+        };
     }
 
     private void spawnHolograms(Instance instance) {
