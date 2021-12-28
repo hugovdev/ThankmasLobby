@@ -1,6 +1,9 @@
-package me.hugo.thankmaslobby.util;
+package me.hugo.thankmaslobby.entities;
 
 import lombok.Getter;
+import me.hugo.thankmaslobby.util.PacketUtil;
+import me.hugo.thankmaslobby.util.StringUtil;
+import me.hugo.thankmaslobby.util.TeamUtil;
 import net.kyori.adventure.util.TriState;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;

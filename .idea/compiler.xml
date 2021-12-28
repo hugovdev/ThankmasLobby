@@ -7,9 +7,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Kweebec Party Maven" />
         <module name="KweebecParty" />
+        <module name="ThankmasLobby" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Kweebec Party Maven" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>

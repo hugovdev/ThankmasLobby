@@ -10,6 +10,9 @@ public class PlayerLeave {
     public PlayerLeave(GlobalEventHandler globalEventHandler) {
         globalEventHandler.addListener(PlayerDisconnectEvent.class, event -> {
             final Player player = event.getPlayer();
+
+            ThankmasLobby.getInstance().getPlayerManager().getPlayerData(player).getRank().getTeam().removeMember(player.getUsername());
+
             ThankmasLobby.getInstance().getPlayerManager().removePlayerData(player);
             System.out.println("[ThankmasLobby] " + player.getUsername() + " left!");
         });

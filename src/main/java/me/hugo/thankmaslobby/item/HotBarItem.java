@@ -2,6 +2,7 @@ package me.hugo.thankmaslobby.item;
 
 import me.hugo.thankmaslobby.ThankmasLobby;
 import me.hugo.thankmaslobby.entities.CustomPearl;
+import me.hugo.thankmaslobby.player.GamePlayer;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
@@ -52,19 +53,23 @@ public enum HotBarItem {
                     Component.text(""),
                     Component.text("Click to shoot!").color(NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false))
     ), player -> {
-        player.playSound(Sound.sound(Key.key("minecraft:entity.enderman.teleport"), Sound.Source.AMBIENT, 1.0f, 1.0f));
-        Entity vehicle = player.getVehicle();
+        GamePlayer gamePlayer = ThankmasLobby.getInstance().getPlayerManager().getPlayerData(player);
 
-        if (vehicle != null && vehicle instanceof CustomPearl) {
-            vehicle.removePassenger(player);
-            vehicle.remove();
+        if (gamePlayer.isDonator("Ride Pearl")) {
+            player.playSound(Sound.sound(Key.key("minecraft:entity.enderman.teleport"), Sound.Source.AMBIENT, 1.0f, 1.0f));
+            Entity vehicle = player.getVehicle();
+
+            if (vehicle != null && vehicle instanceof CustomPearl) {
+                vehicle.removePassenger(player);
+                vehicle.remove();
+            }
+
+            Entity enderPearl = new CustomPearl(player, EntityType.ENDER_PEARL);
+            enderPearl.setInstance(player.getInstance(), player.getPosition().add(0, 1, 0));
+            enderPearl.setVelocity(player.getPosition().direction().mul(40));
+            enderPearl.setGlowing(true);
+            enderPearl.addPassenger(player);
         }
-
-        Entity enderPearl = new CustomPearl(player, EntityType.ENDER_PEARL);
-        enderPearl.setInstance(player.getInstance(), player.getPosition().add(0, 1, 0));
-        enderPearl.setVelocity(player.getPosition().direction().mul(40));
-        enderPearl.setGlowing(true);
-        enderPearl.addPassenger(player);
     }, 4),
     SETTINGS(ItemStack.of(Material.COMPARATOR).withDisplayName(Component.text("Options").color(NamedTextColor.GREEN)
             .append(Component.text(" (Right Click)").color(NamedTextColor.GRAY)).decoration(TextDecoration.ITALIC, false)).withLore(
@@ -98,7 +103,7 @@ public enum HotBarItem {
     public static void executeItemAction(Player player, ItemStack item) {
         HotBarItem hotBarItem = HotBarItem.fromItem(item);
 
-        if(hotBarItem != null) {
+        if (hotBarItem != null) {
             hotBarItem.getClickAction().execute(player);
         }
     }

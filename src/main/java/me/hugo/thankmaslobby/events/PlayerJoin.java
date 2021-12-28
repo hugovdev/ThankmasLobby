@@ -5,6 +5,10 @@ import me.hugo.thankmaslobby.item.HotBarItem;
 import me.hugo.thankmaslobby.player.GamePlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.TitlePart;
+import net.kyori.adventure.util.RGBLike;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.advancements.FrameType;
 import net.minestom.server.advancements.notifications.Notification;
@@ -34,14 +38,17 @@ public class PlayerJoin {
             thankmasLobby.getPlayerManager().getPlayerData(player);
 
             event.setSpawningInstance(MinecraftServer.getInstanceManager().getInstances().iterator().next());
-            player.setRespawnPoint(new Pos(0, 42, 0));
+            player.setRespawnPoint(new Pos(-0.5, 47, -4.5));
         });
 
         globalEventHandler.addListener(PlayerSpawnEvent.class, event -> {
             final Player player = event.getPlayer();
+
             NotificationCenter.send(joinNotification, player);
             thankmasLobby.getPlayerManager().getPlayerData(player).loadSidebar();
-            player.openBook(thankmasLobby.getWelcomeBook());
+
+            player.sendTitlePart(TitlePart.TITLE, Component.text("Hytale Thankmas", TextColor.color(0xFFB400)).decorate(TextDecoration.BOLD));
+            player.sendTitlePart(TitlePart.SUBTITLE, Component.text("Year 2022", TextColor.color(0xFFD358)));
 
             player.getInventory().addInventoryCondition((player1, i, clickType, inventoryConditionResult) -> {
                 if (player1.getOpenInventory() == null) {

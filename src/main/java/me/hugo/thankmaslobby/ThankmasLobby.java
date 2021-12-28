@@ -3,6 +3,7 @@ package me.hugo.thankmaslobby;
 import me.hugo.thankmaslobby.cosmetics.menus.CosmeticsMenu;
 import me.hugo.thankmaslobby.events.*;
 import me.hugo.thankmaslobby.games.GameSelectorMenu;
+import me.hugo.thankmaslobby.lobbynpc.EasterEggNPC;
 import me.hugo.thankmaslobby.lobbynpc.ServerJoinNPC;
 import me.hugo.thankmaslobby.player.PlayerManager;
 import me.hugo.thankmaslobby.settings.OptionManager;
@@ -77,7 +78,10 @@ public class ThankmasLobby {
         minecraftServer.start("0.0.0.0", 25565);
 
         for (ServerJoinNPC lobbyNPC : ServerJoinNPC.values())
-            System.out.println("[NPC] '" + lobbyNPC.getServerName() + "' has been registered!");
+            System.out.println("[Server NPC] '" + lobbyNPC.getServerName() + "' has been registered!");
+
+        for (EasterEggNPC easterEggNPC : EasterEggNPC.values())
+            System.out.println("[EasterEgg NPC] '" + easterEggNPC.getName() + "' has been registered!");
 
         getInstance().startBenchmark();
     }
@@ -121,6 +125,7 @@ public class ThankmasLobby {
             final Component header = Component.text("RAM USAGE: " + ramUsage + " MB")
                     .append(Component.newline())
                     .append(Component.text("TICK TIME: " + MathUtils.round(tickMonitor.getTickTime(), 2) + "ms"));
+
             final Component footer = benchmarkManager.getCpuMonitoringMessage();
             Audiences.players().sendPlayerListHeaderAndFooter(header, footer);
         }).repeat(10, TimeUnit.SERVER_TICK).schedule();

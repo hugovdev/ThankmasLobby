@@ -1,6 +1,8 @@
 package me.hugo.thankmaslobby.player;
 
 import me.hugo.thankmaslobby.ThankmasLobby;
+import me.hugo.thankmaslobby.lobbynpc.EasterEggNPC;
+import me.hugo.thankmaslobby.player.rank.Rank;
 import me.hugo.thankmaslobby.settings.OptionManager;
 import me.hugo.thankmaslobby.settings.option.Option;
 import me.hugo.thankmaslobby.settings.option.OptionState;
@@ -19,23 +21,31 @@ import net.minestom.server.item.Material;
 import net.minestom.server.scoreboard.Sidebar;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 public class GamePlayer {
 
     Player player;
+
     PlayerSkin playerSkin;
     Sidebar scoreboard;
+    Rank rank;
 
     HashMap<Option, OptionState> optionState = new HashMap<>();
     Inventory settingsMenu;
+
+    List<EasterEggNPC> unlockedNPCs = new ArrayList<>();
 
     public GamePlayer(Player player) {
         this.player = player;
         this.playerSkin = player.getSkin();
 
         initOptions();
+        /* Get from local storage */
+        this.rank = Rank.DONATOR;
     }
 
     private void initOptions() {
@@ -60,7 +70,7 @@ public class GamePlayer {
         settingsMenu.addInventoryCondition((player1, i, clickType, inventoryConditionResult) -> {
             inventoryConditionResult.setCancel(true);
 
-            if(i == 39) {
+            if (i == 39) {
                 player1.closeInventory();
                 return;
             }
@@ -68,13 +78,16 @@ public class GamePlayer {
             for (Option option : optionManager.getList()) {
                 if (option.getSlot() == i || option.getSlot() + 9 == i) {
                     OptionState newOptionState = option.getNextState(this.optionState.get(option));
-                    this.optionState.put(option, newOptionState);
-                    option.run(this, newOptionState, true);
 
-                    settingsMenu.setItemStack(option.getSlot(), newOptionState.getMenuIcon());
-                    settingsMenu.setItemStack(option.getSlot() + 9, newOptionState.getToggleMenuIcon());
+                    if (option.run(this, newOptionState, true)) {
+                        this.optionState.put(option, newOptionState);
 
-                    player.playSound(Sound.sound(Key.key("minecraft:block.note_block.hat"), Sound.Source.AMBIENT, 1.0f, 1.0f));
+                        settingsMenu.setItemStack(option.getSlot(), newOptionState.getMenuIcon());
+                        settingsMenu.setItemStack(option.getSlot() + 9, newOptionState.getToggleMenuIcon());
+
+                        player.playSound(Sound.sound(Key.key("minecraft:block.note_block.hat"), Sound.Source.AMBIENT, 1.0f, 1.0f));
+                    }
+
                     break;
                 }
             }
@@ -91,7 +104,7 @@ public class GamePlayer {
         scoreboard.createLine(new Sidebar.ScoreboardLine("date", Component.text(dateFormat.format(new Date())).color(NamedTextColor.GRAY), 12));
         scoreboard.createLine(new Sidebar.ScoreboardLine("space1", Component.text(""), 11));
         scoreboard.createLine(new Sidebar.ScoreboardLine("rank", Component.text("Rank: ").color(NamedTextColor.WHITE)
-                .append(Component.text("Donator").color(NamedTextColor.YELLOW)), 10));
+                .append(Component.text(this.rank.getRankName()).color(this.rank.getRankColor())), 10));
         scoreboard.createLine(new Sidebar.ScoreboardLine("space2", Component.text("", NamedTextColor.AQUA), 9));
         scoreboard.createLine(new Sidebar.ScoreboardLine("lobbyCounter", Component.text("Lobby: ").color(NamedTextColor.WHITE)
                 .append(Component.text("#1").color(NamedTextColor.GREEN)), 8));
@@ -102,11 +115,44 @@ public class GamePlayer {
                 .append(Component.text("0").color(NamedTextColor.GREEN)), 5));
         scoreboard.createLine(new Sidebar.ScoreboardLine("space4", Component.text(" ", NamedTextColor.LIGHT_PURPLE), 4));
         scoreboard.createLine(new Sidebar.ScoreboardLine("easterEggCounter", Component.text("Easter Eggs: ").color(NamedTextColor.WHITE)
-                .append(Component.text("0/15").color(NamedTextColor.GREEN)), 3));
+                .append(Component.text(this.unlockedNPCs.size() + "/" + EasterEggNPC.values().length).color(NamedTextColor.GREEN)), 3));
         scoreboard.createLine(new Sidebar.ScoreboardLine("space5", Component.text(" ", NamedTextColor.YELLOW), 2));
         scoreboard.createLine(new Sidebar.ScoreboardLine("ip", Component.text("events.thoriumcu.be").color(NamedTextColor.YELLOW), 1));
 
         scoreboard.addViewer(player);
+
+        this.rank.getTeam().addMember(player.getUsername());
+        this.player.setTeam(this.rank.getTeam());
+    }
+
+    public void updateEasterEggCounter() {
+        scoreboard.updateLineContent("easterEggCounter", Component.text("Easter Eggs: ").color(NamedTextColor.WHITE)
+                .append(Component.text(this.unlockedNPCs.size() + "/" + EasterEggNPC.values().length).color(NamedTextColor.GREEN)));
+    }
+
+    public Rank getRank() {
+        return rank;
+    }
+
+    public boolean isDonator(String perk) {
+        if (this.rank.getValue() > 0) {
+            return true;
+        } else {
+            if (perk != null) sendDonatorMessage(perk);
+            return false;
+        }
+    }
+
+    public void sendDonatorMessage(String perk) {
+        this.player.sendMessage(Component.text("Only ", NamedTextColor.RED)
+                .append(Component.text("Donators", NamedTextColor.YELLOW))
+                .append(Component.text(" can use ", NamedTextColor.RED))
+                .append(Component.text(perk, NamedTextColor.AQUA))
+                .append(Component.text(", please donate to get access to all the perks!", NamedTextColor.RED)));
+    }
+
+    public List<EasterEggNPC> getUnlockedNPCs() {
+        return unlockedNPCs;
     }
 
     public Sidebar getScoreboard() {
@@ -119,7 +165,6 @@ public class GamePlayer {
 
     private void resetPlayerSkin() {
         if (playerSkin != null) player.setSkin(playerSkin);
-        /* TODO: else custom default player skin? */
     }
 
     public Player getPlayer() {

@@ -23,15 +23,19 @@ public class FlyOption implements Option {
 
     @Override
     public boolean run(GamePlayer playerData, OptionState state, boolean inventoryClick) {
-        boolean isEnabled = state.getStateId() == 1;
-        playerData.getPlayer().sendMessage(Component.text("You ", NamedTextColor.YELLOW)
-                .append(Component.text((isEnabled ? "enabled" : "disabled"), isEnabled ? NamedTextColor.GREEN : NamedTextColor.RED))
-                .append(Component.text(" your flight!", NamedTextColor.YELLOW)));
+        if (playerData.isDonator("Flight Mode")) {
+            boolean isEnabled = state.getStateId() == 1;
+            playerData.getPlayer().sendMessage(Component.text("You ", NamedTextColor.YELLOW)
+                    .append(Component.text((isEnabled ? "enabled" : "disabled"), isEnabled ? NamedTextColor.GREEN : NamedTextColor.RED))
+                    .append(Component.text(" your flight!", NamedTextColor.YELLOW)));
 
-        playerData.getPlayer().setAllowFlying(isEnabled);
-        playerData.getPlayer().setFlying(isEnabled);
+            playerData.getPlayer().setAllowFlying(isEnabled);
+            playerData.getPlayer().setFlying(isEnabled);
 
-        return true;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override

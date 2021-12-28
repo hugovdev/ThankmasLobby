@@ -1,5 +1,7 @@
 package me.hugo.thankmaslobby.games;
 
+import me.hugo.thankmaslobby.ThankmasLobby;
+import me.hugo.thankmaslobby.player.GamePlayer;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
@@ -60,19 +62,29 @@ public enum Game {
     }
 
     public void send(Player player) {
-        TextComponent hoverMessage = Component.text(this.gameName + "\n").color(NamedTextColor.GREEN)
-                .append(Component.text("Server Stats\n\n").color(NamedTextColor.GRAY))
-                .append(Component.text("Players in queue: ")
-                        .color(NamedTextColor.YELLOW).append(Component.text("0\n").color(NamedTextColor.GRAY)))
-                .append(Component.text("Players: ")
-                        .color(NamedTextColor.YELLOW).append(Component.text("0/100").color(NamedTextColor.GRAY)));
+        GamePlayer gamePlayer = ThankmasLobby.getInstance().getPlayerManager().getPlayerData(player);
 
-        player.sendMessage(Component.text("Sending you to " + this.gameName + "... ").color(NamedTextColor.GREEN)
-                .append(Component.text("(Hover for More)").color(NamedTextColor.YELLOW).hoverEvent(hoverMessage)));
+        if (gamePlayer.isDonator(null)) {
+            TextComponent hoverMessage = Component.text(this.gameName + "\n").color(NamedTextColor.GREEN)
+                    .append(Component.text("Server Stats\n\n").color(NamedTextColor.GRAY))
+                    .append(Component.text("Players in queue: ")
+                            .color(NamedTextColor.WHITE).append(Component.text("0\n").color(NamedTextColor.GRAY)))
+                    .append(Component.text("Players: ")
+                            .color(NamedTextColor.WHITE).append(Component.text("0/100").color(NamedTextColor.GRAY)));
 
-        player.playSound(Sound.sound(Key.key("minecraft:block.bamboo.fall"), Sound.Source.AMBIENT, 1.0f, 1.0f));
+            player.sendMessage(Component.text("Sending you to " + this.gameName + "... ").color(NamedTextColor.GREEN)
+                    .append(Component.text("(Hover for More)").color(NamedTextColor.YELLOW).hoverEvent(hoverMessage)));
 
-        /* TODO: Actually send the player lol. */
+            player.playSound(Sound.sound(Key.key("minecraft:block.bamboo.fall"), Sound.Source.AMBIENT, 1.0f, 1.0f));
+
+            /* TODO: Actually send the player lol. */
+        } else {
+            player.sendMessage(Component.text("Only ", NamedTextColor.RED)
+                    .append(Component.text("Donators", NamedTextColor.YELLOW))
+                    .append(Component.text(" can ", NamedTextColor.RED))
+                    .append(Component.text("play games", NamedTextColor.AQUA))
+                    .append(Component.text(", please donate to get access to all the perks!", NamedTextColor.RED)));
+        }
     }
 
     public int getSlot() {

@@ -1,6 +1,6 @@
 package me.hugo.thankmaslobby.events;
 
-import me.hugo.thankmaslobby.util.NPC;
+import me.hugo.thankmaslobby.entities.NPC;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerEntityInteractEvent;
