@@ -1,6 +1,7 @@
 package me.hugo.thankmaslobby;
 
 import me.hugo.thankmaslobby.commands.SecretMenuCommand;
+import me.hugo.thankmaslobby.commands.TestCommand;
 import me.hugo.thankmaslobby.cosmetics.menus.CosmeticsMenu;
 import me.hugo.thankmaslobby.entities.NPC;
 import me.hugo.thankmaslobby.entities.TextNPC;
@@ -95,9 +96,9 @@ public class ThankmasLobby {
         /*
         Register all commands
          */
-
         CommandManager commandManager = MinecraftServer.getCommandManager();
         commandManager.register(new SecretMenuCommand());
+        commandManager.register(new TestCommand());
 
         minecraftServer.start("0.0.0.0", 25565);
 

@@ -34,6 +34,7 @@ public class CosmeticsMenu {
             inventoryConditionResult.setCancel(true);
 
             if (i == 30) {
+                player.playSound(Sound.sound(Key.key("minecraft:block.wooden_button.click_on"), Sound.Source.AMBIENT, 1.0f, 1.0f));
                 player.closeInventory();
                 return;
             }

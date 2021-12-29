@@ -4,14 +4,10 @@ import lombok.Getter;
 import me.hugo.thankmaslobby.util.PacketUtil;
 import me.hugo.thankmaslobby.util.StringUtil;
 import me.hugo.thankmaslobby.util.TeamUtil;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.util.TriState;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.*;
-import net.minestom.server.entity.hologram.Hologram;
 import net.minestom.server.entity.metadata.PlayerMeta;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.network.packet.server.play.EntityHeadLookPacket;
@@ -49,8 +45,6 @@ public class NPC extends EntityCreature {
         this.addPlayerInfoPacket = PacketUtil.addPlayerInfoPacket(this.uuid, this.username, this.playerSkin);
         this.removePlayerInfoPacket = PacketUtil.removePlayerInfoPacket(this.uuid);
 
-        //this.setNoGravity(true);
-
         var meta = new PlayerMeta(this, this.metadata);
 
         meta.setCapeEnabled(true);
@@ -76,10 +70,6 @@ public class NPC extends EntityCreature {
         var connection = player.getPlayerConnection();
 
         connection.sendPacket(this.addPlayerInfoPacket);
-
-        if (this.faceNearestPlayer == TriState.FALSE) {
-            this.swingMainHand();
-        }
 
         MinecraftServer.getSchedulerManager().buildTask(() -> player.sendPacket(this.removePlayerInfoPacket))
                 .delay(Duration.of(100, TimeUnit.SERVER_TICK))

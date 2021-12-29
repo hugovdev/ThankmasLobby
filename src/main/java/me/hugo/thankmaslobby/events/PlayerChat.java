@@ -23,13 +23,17 @@ public class PlayerChat {
             event.setCancelled(true);
 
             /*
-            If the state id is 1 it means it is disabled.
+            If the state id is 1 it means the sender's chat is disabled.
              */
             if(gamePlayer.getState(optionManager.CHAT).getStateId() == 1) {
                 player.sendMessage(Component.text("Your chat is disabled! Activate it to speak!", NamedTextColor.RED));
                 return;
             }
 
+            /*
+            We build the message that will be sent to the ones
+            who have chat enabled.
+             */
             Component chatMessage = gamePlayer.getRank().getPrefix()
                     .append(Component.text(player.getUsername()))
                     .hoverEvent(Component.text("test"))
@@ -37,8 +41,13 @@ public class PlayerChat {
                     .append(Component.text(event.getMessage(), (gamePlayer.getRank().getValue() > 0 ? NamedTextColor.WHITE : NamedTextColor.GRAY)));
 
             for(GamePlayer players : playerManager.getPlayerStorage().values()) {
+                /*
+                If the state id is 0 it means their chat is enabled.
+                 */
                 if(players.getState(optionManager.CHAT).getStateId() == 0) player.sendMessage(chatMessage);
             }
+
+            System.out.println(player.getUsername() + " said '" + event.getMessage() + "'.");
         });
     }
 

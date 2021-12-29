@@ -48,7 +48,10 @@ public class GamePlayer {
         this.player = player;
         this.playerSkin = player.getSkin();
 
+        // Initialize the options menu loading their preferences.
         initOptions();
+
+        // Initialize the secrets menu loading their unlocked and locked secrets.
         initUnlockedSecrets();
 
         /* Get from local storage */
@@ -78,6 +81,7 @@ public class GamePlayer {
             inventoryConditionResult.setCancel(true);
 
             if (i == 39) {
+                player1.playSound(Sound.sound(Key.key("minecraft:block.wooden_button.click_on"), Sound.Source.AMBIENT, 1.0f, 1.0f));
                 player1.closeInventory();
                 return;
             }
@@ -149,7 +153,7 @@ public class GamePlayer {
         scoreboard.createLine(new Sidebar.ScoreboardLine("playerCounter", Component.text("Global Players: ").color(NamedTextColor.WHITE)
                 .append(Component.text("0").color(NamedTextColor.GREEN)), 5));
         scoreboard.createLine(new Sidebar.ScoreboardLine("space4", Component.text(" ", NamedTextColor.LIGHT_PURPLE), 4));
-        scoreboard.createLine(new Sidebar.ScoreboardLine("easterEggCounter", Component.text("Secrets Found: ").color(NamedTextColor.WHITE)
+        scoreboard.createLine(new Sidebar.ScoreboardLine("secretCounter", Component.text("Secrets Found: ").color(NamedTextColor.WHITE)
                 .append(Component.text(this.unlockedNPCs.size() + "/" + EasterEggNPC.values().length).color(NamedTextColor.GREEN)), 3));
         scoreboard.createLine(new Sidebar.ScoreboardLine("space5", Component.text(" ", NamedTextColor.YELLOW), 2));
         scoreboard.createLine(new Sidebar.ScoreboardLine("ip", Component.text("events.thoriumcu.be").color(NamedTextColor.YELLOW), 1));
@@ -164,8 +168,8 @@ public class GamePlayer {
         return optionState.get(option);
     }
 
-    public void updateEasterEggCounter() {
-        scoreboard.updateLineContent("easterEggCounter", Component.text("Secrets Found: ").color(NamedTextColor.WHITE)
+    public void updateSecretCounter() {
+        scoreboard.updateLineContent("secretCounter", Component.text("Secrets Found: ").color(NamedTextColor.WHITE)
                 .append(Component.text(this.unlockedNPCs.size() + "/" + EasterEggNPC.values().length).color(NamedTextColor.GREEN)));
     }
 

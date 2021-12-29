@@ -11,6 +11,8 @@ public class SecretMenuCommand extends Command {
         super("opensecretsmenu");
 
         setDefaultExecutor(((commandSender, commandContext) -> {
+
+            // If the command executor is not a player we tell them and return.
             if(!(commandSender instanceof Player)) {
                 commandSender.sendMessage("You need to be a player to execute this command!");
                 return;
