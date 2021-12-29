@@ -1,6 +1,7 @@
 package me.hugo.thankmaslobby.lobbynpc;
 
 import me.hugo.thankmaslobby.ThankmasLobby;
+import me.hugo.thankmaslobby.entities.TextNPC;
 import me.hugo.thankmaslobby.player.GamePlayer;
 import me.hugo.thankmaslobby.entities.NPC;
 import net.kyori.adventure.key.Key;
@@ -21,16 +22,16 @@ import java.util.function.Consumer;
 public enum EasterEggNPC {
 
     KWEEBEC_CORNER(0, "Kweebec Corner", PlayerSkin.fromUsername("KweebecCorner"), new Pos(-6.5, 40, 14.5, -90, 0), "Stay safe and keep free!"),
-    ;
+    EFS3(1, "EFS3", PlayerSkin.fromUsername("EFS3"), new Pos(11, 40, 13.5, 140, 0), "ඞ"),
+    BUDDHACAT(2, "BuddhaCat", PlayerSkin.fromUsername("BuddhaCat"), new Pos(6.5, 40, 23.5, 160, 0), "Remember to ask me what phrase I want for my NPC!");
 
     private final int id;
     private final String name;
     private final PlayerSkin npcSkin;
     private Pos npcPosition;
     private String[] dialogue;
-    private Hologram[] holograms = new Hologram[5];
 
-    private final NPC npc;
+    private final TextNPC npc;
 
     EasterEggNPC(int id, String name, PlayerSkin npcSkin, Pos npcPosition, String... dialogue) {
         this.id = id;
@@ -41,8 +42,8 @@ public enum EasterEggNPC {
 
         Instance instance = MinecraftServer.getInstanceManager().getInstances().iterator().next();
 
-        this.npc = new NPC(instance, this.npcPosition, this.npcSkin, TriState.TRUE, getNPCInteraction());
-        spawnHolograms(instance);
+        this.npc = new TextNPC(instance, this.npcPosition, this.npcSkin, TriState.TRUE, getNPCInteraction(), Component.text(this.name, NamedTextColor.AQUA),
+                Component.text("CLICK", NamedTextColor.YELLOW).decorate(TextDecoration.BOLD));
     }
 
     private Consumer<NPC.NPCInteraction> getNPCInteraction() {
@@ -52,15 +53,17 @@ public enum EasterEggNPC {
             player.playSound(Sound.sound(Key.key("minecraft:entity.villager.yes"), Sound.Source.VOICE, 1.0f, 1.0f));
 
             if (!gamePlayer.getUnlockedNPCs().contains(this)) {
-                player.playSound(Sound.sound(Key.key("minecraft:entity.player.levelup"), Sound.Source.AMBIENT, 1.0f, 1.0f));
-
                 gamePlayer.getUnlockedNPCs().add(this);
                 gamePlayer.updateEasterEggCounter();
+
+                player.playSound(Sound.sound(Key.key("minecraft:entity.player.levelup"), Sound.Source.AMBIENT, 1.0f, 1.0f));
+
+                String unlockedNPCs = gamePlayer.getUnlockedNPCs().size() + "/" + EasterEggNPC.values().length;
 
                 Component hoverMessage = Component.text("NPC Quest", NamedTextColor.GREEN).append(Component.newline())
                         .append(Component.text("Your Journey", NamedTextColor.GRAY).append(Component.newline()).append(Component.newline())
                                 .append(Component.text("Your NPCs: ", NamedTextColor.WHITE))
-                                .append(Component.text(gamePlayer.getUnlockedNPCs().size() + "/" + EasterEggNPC.values().length, NamedTextColor.GRAY))
+                                .append(Component.text(unlockedNPCs, NamedTextColor.GRAY))
                                 .append(Component.newline()).append(Component.newline())
                                 .append(Component.text("Click to see more!", NamedTextColor.YELLOW)));
 
@@ -68,27 +71,12 @@ public enum EasterEggNPC {
                         .append(Component.text("You unlocked ", NamedTextColor.YELLOW).decoration(TextDecoration.BOLD, false))
                         .append(Component.text(this.name + "'s ", NamedTextColor.AQUA).decoration(TextDecoration.BOLD, false))
                         .append(Component.text("NPC! ", NamedTextColor.YELLOW).decoration(TextDecoration.BOLD, false))
-                        .append(Component.text("CLICK", NamedTextColor.GREEN).decoration(TextDecoration.BOLD, true).hoverEvent(hoverMessage)));
+                        .append(Component.text("CLICK", NamedTextColor.GREEN).decoration(TextDecoration.BOLD, true).hoverEvent(hoverMessage))
+                        .append(Component.text(" (" + unlockedNPCs + ")", NamedTextColor.GRAY).decoration(TextDecoration.BOLD, false)));
             }
 
             player.sendMessage(Component.text("[NPC] " + this.name, NamedTextColor.GOLD).append(Component.text(": " + this.dialogue[0], NamedTextColor.WHITE)));
         };
-    }
-
-    private void spawnHolograms(Instance instance) {
-        int count = 0;
-
-        Component[] hologramLines = new Component[]{
-                Component.text(this.name, NamedTextColor.AQUA),
-                Component.text("CLICK", NamedTextColor.YELLOW).decorate(TextDecoration.BOLD)};
-
-        for (int i = hologramLines.length - 1; i >= 0; i--) {
-            Component component = hologramLines[i];
-            Hologram hologram = new Hologram(instance, new Pos(this.npcPosition).add(0, 1.7 + (0.3 * count), 0), component);
-            holograms[count] = hologram;
-
-            count++;
-        }
     }
 
     public Pos getPosition() {

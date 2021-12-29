@@ -4,13 +4,14 @@ import lombok.Getter;
 import me.hugo.thankmaslobby.util.PacketUtil;
 import me.hugo.thankmaslobby.util.StringUtil;
 import me.hugo.thankmaslobby.util.TeamUtil;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.util.TriState;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
-import net.minestom.server.entity.EntityType;
-import net.minestom.server.entity.LivingEntity;
-import net.minestom.server.entity.Player;
-import net.minestom.server.entity.PlayerSkin;
+import net.minestom.server.entity.*;
+import net.minestom.server.entity.hologram.Hologram;
 import net.minestom.server.entity.metadata.PlayerMeta;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.network.packet.server.play.EntityHeadLookPacket;
@@ -23,7 +24,7 @@ import java.time.Duration;
 import java.util.function.Consumer;
 
 @Getter
-public class NPC extends LivingEntity {
+public class NPC extends EntityCreature {
 
     private final Pos position;
     private final PlayerSkin playerSkin;
@@ -48,7 +49,7 @@ public class NPC extends LivingEntity {
         this.addPlayerInfoPacket = PacketUtil.addPlayerInfoPacket(this.uuid, this.username, this.playerSkin);
         this.removePlayerInfoPacket = PacketUtil.removePlayerInfoPacket(this.uuid);
 
-        this.setNoGravity(true);
+        //this.setNoGravity(true);
 
         var meta = new PlayerMeta(this, this.metadata);
 
@@ -102,7 +103,10 @@ public class NPC extends LivingEntity {
 
         if (this.faceNearestPlayer == TriState.TRUE) {
             for (var player : this.viewers) {
-                this.lookAt(player);
+                if (position.distanceSquared(player.getPosition()) <= 8 * 8) {
+                    // 8 blocks check
+                    this.lookAt(player);
+                }
             }
         }
     }

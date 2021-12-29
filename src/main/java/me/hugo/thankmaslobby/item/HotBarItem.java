@@ -37,7 +37,7 @@ public enum HotBarItem {
     ), player -> {
         ThankmasLobby.getInstance().getCosmeticsMenu().openMenu(player);
     }, 1),
-    INFORMATION(ItemStack.of(Material.WRITTEN_BOOK).withDisplayName(Component.text("Information").color(NamedTextColor.GREEN)
+    INFORMATION(ItemStack.of(Material.TURTLE_EGG).withDisplayName(Component.text("Secret Tracker").color(NamedTextColor.GREEN)
             .append(Component.text(" (Right Click)").color(NamedTextColor.GRAY)).decoration(TextDecoration.ITALIC, false)).withLore(
             Arrays.asList(Component.text("Learn more about Hytale Thankmas").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
                     Component.text("and the server you are on!").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),

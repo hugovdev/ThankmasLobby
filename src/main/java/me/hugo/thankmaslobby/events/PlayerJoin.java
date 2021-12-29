@@ -39,7 +39,7 @@ public class PlayerJoin {
 
             // Set player spawn location
             event.setSpawningInstance(MinecraftServer.getInstanceManager().getInstances().iterator().next());
-            player.setRespawnPoint(new Pos(-0.5, 47, -4.5));
+            player.setRespawnPoint(thankmasLobby.getSpawnLocation());
         });
 
         globalEventHandler.addListener(PlayerSpawnEvent.class, event -> {

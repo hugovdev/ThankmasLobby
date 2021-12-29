@@ -1,5 +1,6 @@
 package me.hugo.thankmaslobby.lobbynpc;
 
+import me.hugo.thankmaslobby.entities.TextNPC;
 import me.hugo.thankmaslobby.games.Game;
 import me.hugo.thankmaslobby.entities.NPC;
 import net.kyori.adventure.text.Component;
@@ -44,8 +45,7 @@ public enum ServerJoinNPC {
     private final ItemStack mainHand;
     private final ItemStack offHand;
 
-    private final NPC npc;
-    private final Hologram[] holograms;
+    private final TextNPC npc;
 
     ServerJoinNPC(String serverName,
                   Pos npcPosition,
@@ -69,34 +69,14 @@ public enum ServerJoinNPC {
         this.boots = boots;
         this.mainHand = mainHand;
         this.offHand = offHand;
-        this.holograms = new Hologram[5];
 
         Instance instance = MinecraftServer.getInstanceManager().getInstances().iterator().next();
 
-        this.npc = new NPC(instance, this.npcPosition, this.npcSkin, TriState.FALSE, npcInteraction -> this.gameToBeSent.send(npcInteraction.player()));
-        equipNPC();
-        spawnHolograms(instance);
-    }
-
-    private void spawnHolograms(Instance instance) {
-        int count = 0;
-
-        Component[] hologramLines = new Component[]{
+        this.npc = new TextNPC(instance, this.npcPosition, this.npcSkin, TriState.FALSE, npcInteraction -> this.gameToBeSent.send(npcInteraction.player()),
                 Component.text(gameToBeSent.getGameName(), NamedTextColor.AQUA),
                 Component.text("0 playing", NamedTextColor.YELLOW), //TODO: Get from Velocity
-                Component.text("CLICK TO PLAY", NamedTextColor.YELLOW).decorate(TextDecoration.BOLD)};
-
-        for (int i = hologramLines.length - 1; i >= 0; i--) {
-            Component component = hologramLines[i];
-            Hologram hologram = new Hologram(instance, new Pos(this.npcPosition).add(0, 1.7 + (0.3 * count), 0), component);
-            holograms[count] = hologram;
-
-            count++;
-        }
-    }
-
-    public Hologram[] getHolograms() {
-        return holograms;
+                Component.text("CLICK TO PLAY", NamedTextColor.YELLOW).decorate(TextDecoration.BOLD));
+        equipNPC();
     }
 
     public PlayerSkin getNpcSkin() {
