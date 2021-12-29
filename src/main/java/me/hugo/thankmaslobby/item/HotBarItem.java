@@ -44,7 +44,7 @@ public enum HotBarItem {
                     Component.text(""),
                     Component.text("Click to open!").color(NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false))
     ), player -> {
-        player.openBook(ThankmasLobby.getInstance().getWelcomeBook());
+        ThankmasLobby.getInstance().getPlayerManager().getPlayerData(player).getUnlockedNPCMenu().open(player);
     }, 2),
     RIDE_PEARL(ItemStack.of(Material.ENDER_PEARL).withDisplayName(Component.text("Ride Pearl").color(NamedTextColor.GREEN)
             .append(Component.text(" (Right Click)").color(NamedTextColor.GRAY)).decoration(TextDecoration.ITALIC, false)).withLore(

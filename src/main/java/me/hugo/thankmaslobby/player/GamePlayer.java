@@ -6,6 +6,8 @@ import me.hugo.thankmaslobby.player.rank.Rank;
 import me.hugo.thankmaslobby.settings.OptionManager;
 import me.hugo.thankmaslobby.settings.option.Option;
 import me.hugo.thankmaslobby.settings.option.OptionState;
+import me.hugo.thankmaslobby.util.PaginatedGUI;
+import me.hugo.thankmaslobby.util.SkinUtil;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
@@ -18,7 +20,9 @@ import net.minestom.server.inventory.Inventory;
 import net.minestom.server.inventory.InventoryType;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
+import net.minestom.server.item.metadata.PlayerHeadMeta;
 import net.minestom.server.scoreboard.Sidebar;
+import net.minestom.server.tag.Tag;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,12 +42,15 @@ public class GamePlayer {
     Inventory settingsMenu;
 
     List<EasterEggNPC> unlockedNPCs = new ArrayList<>();
+    PaginatedGUI unlockedNPCMenu;
 
     public GamePlayer(Player player) {
         this.player = player;
         this.playerSkin = player.getSkin();
 
         initOptions();
+        initUnlockedSecrets();
+
         /* Get from local storage */
         this.rank = Rank.DONATOR;
     }
@@ -94,6 +101,34 @@ public class GamePlayer {
         });
     }
 
+    private void initUnlockedSecrets() {
+        unlockedNPCMenu = new PaginatedGUI(InventoryType.CHEST_4_ROW, ItemStack.of(Material.IRON_HELMET).withDisplayName(Component.text("Secret NPCs", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false)),
+                "Secret NPCs", PaginatedGUI.PageFormat.TWO_ROWS, null);
+
+        for (EasterEggNPC easterEggNPC : EasterEggNPC.values())
+            unlockedNPCMenu.addItem(unlockedNPCs.contains(easterEggNPC) ? easterEggNPC.getUnlockedState() : easterEggNPC.getLockedState());
+
+        unlockedNPCMenu.addInventoryCondition((playerWhoClicked, i, clickType, inventoryConditionResult) -> {
+            if(inventoryConditionResult.getClickedItem().getMaterial() != Material.PLAYER_HEAD) return;
+
+                for (EasterEggNPC easterEggNPC : EasterEggNPC.values()) {
+                    if (inventoryConditionResult.getClickedItem() == easterEggNPC.getUnlockedState()) {
+                        playerWhoClicked.closeInventory();
+
+                        playerWhoClicked.teleport(easterEggNPC.getPosition());
+                        playerWhoClicked.sendMessage(Component.text("You have been teleported to ", NamedTextColor.YELLOW)
+                                .append(Component.text(easterEggNPC.getName() + "'s ", NamedTextColor.AQUA))
+                                .append(Component.text("NPC!")));
+
+                        player.playSound(Sound.sound(Key.key("minecraft:entity.enderman.teleport"), Sound.Source.AMBIENT, 1.0f, 1.0f));
+                        return;
+                    }
+                }
+
+                playerWhoClicked.sendMessage(Component.text("You have not unlocked this secret NPC!", NamedTextColor.RED));
+        });
+    }
+
     public void loadSidebar() {
         String pattern = "MM/dd/yyyy";
         SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
@@ -125,9 +160,17 @@ public class GamePlayer {
         this.player.setTeam(this.rank.getTeam());
     }
 
+    public OptionState getState(Option option) {
+        return optionState.get(option);
+    }
+
     public void updateEasterEggCounter() {
         scoreboard.updateLineContent("easterEggCounter", Component.text("Secrets Found: ").color(NamedTextColor.WHITE)
                 .append(Component.text(this.unlockedNPCs.size() + "/" + EasterEggNPC.values().length).color(NamedTextColor.GREEN)));
+    }
+
+    public PaginatedGUI getUnlockedNPCMenu() {
+        return unlockedNPCMenu;
     }
 
     public Rank getRank() {

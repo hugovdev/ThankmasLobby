@@ -1,5 +1,6 @@
 package me.hugo.thankmaslobby;
 
+import me.hugo.thankmaslobby.commands.SecretMenuCommand;
 import me.hugo.thankmaslobby.cosmetics.menus.CosmeticsMenu;
 import me.hugo.thankmaslobby.entities.NPC;
 import me.hugo.thankmaslobby.entities.TextNPC;
@@ -19,6 +20,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.util.TriState;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.adventure.audience.Audiences;
+import net.minestom.server.command.CommandManager;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerSkin;
@@ -88,6 +90,14 @@ public class ThankmasLobby {
         new PlayerLeave(globalEventHandler);
         new PlayerSwitchHands(globalEventHandler);
         new EntityInteraction(globalEventHandler);
+        new PlayerChat(globalEventHandler);
+
+        /*
+        Register all commands
+         */
+
+        CommandManager commandManager = MinecraftServer.getCommandManager();
+        commandManager.register(new SecretMenuCommand());
 
         minecraftServer.start("0.0.0.0", 25565);
 
