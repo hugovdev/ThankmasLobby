@@ -57,7 +57,7 @@ public enum EasterEggNPC {
         Instance instance = MinecraftServer.getInstanceManager().getInstances().iterator().next();
 
         // We create a TextNPC on the specified position, with the specified skin and properties.
-        this.npc = new TextNPC(instance, this.npcPosition, this.npcSkin, TriState.FALSE, getNPCInteraction(), Component.text(this.name, NamedTextColor.AQUA),
+        this.npc = new TextNPC(instance, this.npcPosition, this.npcSkin, TriState.TRUE, getNPCInteraction(), Component.text(this.name, NamedTextColor.AQUA),
                 Component.text("CLICK", NamedTextColor.YELLOW).decorate(TextDecoration.BOLD));
 
         // We create the icons for both the locked and unlocked npc for menus.
@@ -82,9 +82,8 @@ public enum EasterEggNPC {
 
                 // We update the menu
                 gamePlayer.getUnlockedNPCMenu().replaceItem(this.lockedState, this.unlockedState);
+                gamePlayer.updateCategory(ThankmasLobby.getInstance().getSecretCategoryManager().NPC_CATEGORY);
             }
-
-            this.npc.getNavigator().setPathTo(ThankmasLobby.getInstance().getSpawnLocation());
 
             // We pick a random dialogue line and send it.
             player.sendMessage(Component.text("[NPC] " + this.name, NamedTextColor.GOLD).append(Component.text(": " + this.dialogue[ThreadLocalRandom.current().nextInt(this.dialogue.length)], NamedTextColor.WHITE)));

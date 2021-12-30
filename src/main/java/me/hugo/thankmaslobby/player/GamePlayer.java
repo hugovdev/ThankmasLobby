@@ -3,11 +3,15 @@ package me.hugo.thankmaslobby.player;
 import me.hugo.thankmaslobby.ThankmasLobby;
 import me.hugo.thankmaslobby.lobbynpc.EasterEggNPC;
 import me.hugo.thankmaslobby.player.rank.Rank;
+import me.hugo.thankmaslobby.secrets.SecretCategory;
+import me.hugo.thankmaslobby.secrets.SecretCategoryManager;
 import me.hugo.thankmaslobby.settings.OptionManager;
 import me.hugo.thankmaslobby.settings.option.Option;
 import me.hugo.thankmaslobby.settings.option.OptionState;
 import me.hugo.thankmaslobby.util.PaginatedGUI;
 import me.hugo.thankmaslobby.util.SkinUtil;
+import me.hugo.thankmaslobby.util.StringUtil;
+import me.hugo.thankmaslobby.util.StringUtils;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
@@ -18,6 +22,9 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerSkin;
 import net.minestom.server.inventory.Inventory;
 import net.minestom.server.inventory.InventoryType;
+import net.minestom.server.inventory.click.ClickType;
+import net.minestom.server.inventory.condition.InventoryCondition;
+import net.minestom.server.inventory.condition.InventoryConditionResult;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.item.metadata.PlayerHeadMeta;
@@ -32,6 +39,7 @@ import java.util.List;
 
 public class GamePlayer {
 
+    ThankmasLobby main;
     Player player;
 
     PlayerSkin playerSkin;
@@ -41,10 +49,12 @@ public class GamePlayer {
     HashMap<Option, OptionState> optionState = new HashMap<>();
     Inventory settingsMenu;
 
+    PaginatedGUI secretsMenu;
     List<EasterEggNPC> unlockedNPCs = new ArrayList<>();
     PaginatedGUI unlockedNPCMenu;
 
-    public GamePlayer(Player player) {
+    public GamePlayer(Player player, ThankmasLobby main) {
+        this.main = main;
         this.player = player;
         this.playerSkin = player.getSkin();
 
@@ -52,6 +62,7 @@ public class GamePlayer {
         initOptions();
 
         // Initialize the secrets menu loading their unlocked and locked secrets.
+        initSecretsMenu();
         initUnlockedSecrets();
 
         /* Get from local storage */
@@ -59,7 +70,7 @@ public class GamePlayer {
     }
 
     private void initOptions() {
-        OptionManager optionManager = ThankmasLobby.getInstance().getOptionManager();
+        OptionManager optionManager = main.getOptionManager();
 
         for (Option option : optionManager.getList()) optionState.put(option, option.getDefaultState());
 
@@ -105,31 +116,50 @@ public class GamePlayer {
         });
     }
 
+    private void initSecretsMenu() {
+        secretsMenu = new PaginatedGUI(InventoryType.CHEST_4_ROW, ItemStack.of(Material.TURTLE_EGG)
+                .withDisplayName(Component.text("Secrets", NamedTextColor.GREEN)), "Secrets", null, null);
+
+        SecretCategoryManager secretCategoryManager = main.getSecretCategoryManager();
+
+        for (SecretCategory secretCategory : secretCategoryManager.getSecretCategorySlots().values()) {
+            secretsMenu.setItem(secretCategory.getMenuIcon(this), 0, secretCategoryManager.getSecretCategorySlots().inverse().get(secretCategory));
+        }
+
+        secretsMenu.addInventoryCondition((player, i, clickType, inventoryConditionResult) -> {
+            SecretCategory secretCategory = secretCategoryManager.getSecretCategorySlots().get(i);
+
+            if(secretCategory != null) {
+                secretCategory.getSecretChecker().openMenu(this);
+            }
+        });
+    }
+
     private void initUnlockedSecrets() {
         unlockedNPCMenu = new PaginatedGUI(InventoryType.CHEST_4_ROW, ItemStack.of(Material.IRON_HELMET).withDisplayName(Component.text("Secret NPCs", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false)),
-                "Secret NPCs", PaginatedGUI.PageFormat.TWO_ROWS, null);
+                "Secret NPCs", PaginatedGUI.PageFormat.TWO_ROWS, secretsMenu.getPages().get(0));
 
         for (EasterEggNPC easterEggNPC : EasterEggNPC.values())
             unlockedNPCMenu.addItem(unlockedNPCs.contains(easterEggNPC) ? easterEggNPC.getUnlockedState() : easterEggNPC.getLockedState());
 
         unlockedNPCMenu.addInventoryCondition((playerWhoClicked, i, clickType, inventoryConditionResult) -> {
-            if(inventoryConditionResult.getClickedItem().getMaterial() != Material.PLAYER_HEAD) return;
+            if (inventoryConditionResult.getClickedItem().getMaterial() != Material.PLAYER_HEAD) return;
 
-                for (EasterEggNPC easterEggNPC : EasterEggNPC.values()) {
-                    if (inventoryConditionResult.getClickedItem() == easterEggNPC.getUnlockedState()) {
-                        playerWhoClicked.closeInventory();
+            for (EasterEggNPC easterEggNPC : EasterEggNPC.values()) {
+                if (inventoryConditionResult.getClickedItem() == easterEggNPC.getUnlockedState()) {
+                    playerWhoClicked.closeInventory();
 
-                        playerWhoClicked.teleport(easterEggNPC.getPosition());
-                        playerWhoClicked.sendMessage(Component.text("You have been teleported to ", NamedTextColor.YELLOW)
-                                .append(Component.text(easterEggNPC.getName() + "'s ", NamedTextColor.AQUA))
-                                .append(Component.text("NPC!")));
+                    playerWhoClicked.teleport(easterEggNPC.getPosition());
+                    playerWhoClicked.sendMessage(Component.text("You have been teleported to ", NamedTextColor.YELLOW)
+                            .append(Component.text(easterEggNPC.getName() + "'s ", NamedTextColor.AQUA))
+                            .append(Component.text("NPC!")));
 
-                        player.playSound(Sound.sound(Key.key("minecraft:entity.enderman.teleport"), Sound.Source.AMBIENT, 1.0f, 1.0f));
-                        return;
-                    }
+                    player.playSound(Sound.sound(Key.key("minecraft:entity.enderman.teleport"), Sound.Source.AMBIENT, 1.0f, 1.0f));
+                    return;
                 }
+            }
 
-                playerWhoClicked.sendMessage(Component.text("You have not unlocked this secret NPC!", NamedTextColor.RED));
+            playerWhoClicked.sendMessage(Component.text("You have not unlocked this secret NPC!", NamedTextColor.RED));
         });
     }
 
@@ -173,6 +203,10 @@ public class GamePlayer {
                 .append(Component.text(this.unlockedNPCs.size() + "/" + EasterEggNPC.values().length).color(NamedTextColor.GREEN)));
     }
 
+    public void updateCategory(SecretCategory secretCategory) {
+        secretsMenu.setItem(secretCategory.getMenuIcon(this), 0, main.getSecretCategoryManager().getSecretCategorySlots().inverse().get(secretCategory));
+    }
+
     public PaginatedGUI getUnlockedNPCMenu() {
         return unlockedNPCMenu;
     }
@@ -196,6 +230,10 @@ public class GamePlayer {
                 .append(Component.text(" can use ", NamedTextColor.RED))
                 .append(Component.text(perk, NamedTextColor.AQUA))
                 .append(Component.text(", please donate to get access to all the perks!", NamedTextColor.RED)));
+    }
+
+    public PaginatedGUI getSecretsMenu() {
+        return secretsMenu;
     }
 
     public List<EasterEggNPC> getUnlockedNPCs() {

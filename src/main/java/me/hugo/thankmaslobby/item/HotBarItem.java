@@ -37,14 +37,14 @@ public enum HotBarItem {
     ), player -> {
         ThankmasLobby.getInstance().getCosmeticsMenu().openMenu(player);
     }, 1),
-    INFORMATION(ItemStack.of(Material.TURTLE_EGG).withDisplayName(Component.text("Secret Tracker").color(NamedTextColor.GREEN)
+    SECRETS(ItemStack.of(Material.TURTLE_EGG).withDisplayName(Component.text("Secret Tracker").color(NamedTextColor.GREEN)
             .append(Component.text(" (Right Click)").color(NamedTextColor.GRAY)).decoration(TextDecoration.ITALIC, false)).withLore(
             Arrays.asList(Component.text("Learn more about Hytale Thankmas").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
                     Component.text("and the server you are on!").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
                     Component.text(""),
                     Component.text("Click to open!").color(NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false))
     ), player -> {
-        ThankmasLobby.getInstance().getPlayerManager().getPlayerData(player).getUnlockedNPCMenu().open(player);
+        ThankmasLobby.getInstance().getPlayerManager().getPlayerData(player).getSecretsMenu().open(player);
     }, 2),
     RIDE_PEARL(ItemStack.of(Material.ENDER_PEARL).withDisplayName(Component.text("Ride Pearl").color(NamedTextColor.GREEN)
             .append(Component.text(" (Right Click)").color(NamedTextColor.GRAY)).decoration(TextDecoration.ITALIC, false)).withLore(

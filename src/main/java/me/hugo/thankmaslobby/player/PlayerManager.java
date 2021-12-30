@@ -1,5 +1,6 @@
 package me.hugo.thankmaslobby.player;
 
+import me.hugo.thankmaslobby.ThankmasLobby;
 import net.minestom.server.entity.Player;
 
 import java.util.HashMap;
@@ -17,7 +18,7 @@ public class PlayerManager {
         if(playerStorage.containsKey(player.getUuid())) {
             return playerStorage.get(player.getUuid());
         } else {
-            GamePlayer playerData = new GamePlayer(player);
+            GamePlayer playerData = new GamePlayer(player, ThankmasLobby.getInstance());
             playerStorage.put(player.getUuid(), playerData);
 
             return playerData;

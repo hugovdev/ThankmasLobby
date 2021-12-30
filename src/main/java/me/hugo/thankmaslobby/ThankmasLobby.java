@@ -1,6 +1,7 @@
 package me.hugo.thankmaslobby;
 
 import me.hugo.thankmaslobby.commands.SecretMenuCommand;
+import me.hugo.thankmaslobby.commands.StopCommand;
 import me.hugo.thankmaslobby.commands.TestCommand;
 import me.hugo.thankmaslobby.cosmetics.menus.CosmeticsMenu;
 import me.hugo.thankmaslobby.entities.NPC;
@@ -10,6 +11,7 @@ import me.hugo.thankmaslobby.games.GameSelectorMenu;
 import me.hugo.thankmaslobby.lobbynpc.EasterEggNPC;
 import me.hugo.thankmaslobby.lobbynpc.ServerJoinNPC;
 import me.hugo.thankmaslobby.player.PlayerManager;
+import me.hugo.thankmaslobby.secrets.SecretCategoryManager;
 import me.hugo.thankmaslobby.settings.OptionManager;
 import me.hugo.thankmaslobby.world.EmptyGenerator;
 import net.kyori.adventure.inventory.Book;
@@ -46,22 +48,25 @@ public class ThankmasLobby {
     private static ThankmasLobby main;
     private Instance mainInstance;
 
-    private PlayerManager playerManager;
     private Book welcomeBook;
 
     private GameSelectorMenu gameSelectorMenu;
     private CosmeticsMenu cosmeticsMenu;
 
+    private PlayerManager playerManager;
+    private SecretCategoryManager secretCategoryManager;
     private OptionManager optionManager;
+
     private Pos spawnLocation;
 
     public static void main(String[] args) {
         MinecraftServer minecraftServer = MinecraftServer.init();
+        MinecraftServer.getConnectionManager().setShutdownText(Component.text("Thankmas lobby is restarting! Come back soon!", NamedTextColor.RED));
         main = new ThankmasLobby();
 
         MojangAuth.init();
-        main.initManagers();
         main.mainInstance = main.initMainWorld();
+        main.initManagers();
 
         main.spawnLocation = new Pos(-0.5, 47, -14.5, 0, 0);
 
@@ -99,6 +104,7 @@ public class ThankmasLobby {
         CommandManager commandManager = MinecraftServer.getCommandManager();
         commandManager.register(new SecretMenuCommand());
         commandManager.register(new TestCommand());
+        commandManager.register(new StopCommand());
 
         minecraftServer.start("0.0.0.0", 25565);
 
@@ -144,6 +150,7 @@ public class ThankmasLobby {
     private void initManagers() {
         playerManager = new PlayerManager();
         optionManager = new OptionManager();
+        secretCategoryManager = new SecretCategoryManager();
     }
 
     private void startBenchmark() {
@@ -201,5 +208,9 @@ public class ThankmasLobby {
 
     public OptionManager getOptionManager() {
         return optionManager;
+    }
+
+    public SecretCategoryManager getSecretCategoryManager() {
+        return secretCategoryManager;
     }
 }

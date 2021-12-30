@@ -127,6 +127,10 @@ public class PaginatedGUI {
         return new int[]{index, i};
     }
 
+    public List<Inventory> getPages() {
+        return pages;
+    }
+
     public void open(Player player) {
         player.openInventory(pages.get(0));
     }
