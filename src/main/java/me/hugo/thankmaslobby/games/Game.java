@@ -66,7 +66,7 @@ public enum Game {
     public void send(Player player) {
         GamePlayer gamePlayer = ThankmasLobby.getInstance().getPlayerManager().getPlayerData(player);
 
-        if (gamePlayer.isDonator(null)) {
+        if (gamePlayer.isDonator(null, null)) {
             TextComponent hoverMessage = Component.text(this.gameName + "\n").color(NamedTextColor.GREEN)
                     .append(Component.text("Server Stats\n\n").color(NamedTextColor.GRAY))
                     .append(Component.text("Players in queue: ").color(NamedTextColor.WHITE)
@@ -82,11 +82,7 @@ public enum Game {
 
             /* TODO: Actually send the player lol. */
         } else {
-            player.sendMessage(Component.text("Only ", NamedTextColor.RED)
-                    .append(Component.text("Donators", NamedTextColor.YELLOW))
-                    .append(Component.text(" can ", NamedTextColor.RED))
-                    .append(Component.text("play games", NamedTextColor.AQUA))
-                    .append(Component.text(", please donate to get access to all the perks!", NamedTextColor.RED)));
+            gamePlayer.sendDonatorMessage("to", "play games");
         }
     }
 

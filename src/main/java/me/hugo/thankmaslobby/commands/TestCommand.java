@@ -14,6 +14,7 @@ import net.minestom.server.entity.PlayerSkin;
 import net.minestom.server.entity.ai.EntityAIGroupBuilder;
 import net.minestom.server.entity.ai.goal.DoNothingGoal;
 import net.minestom.server.entity.ai.goal.RandomStrollGoal;
+import net.minestom.server.network.packet.server.play.PlayerInfoPacket;
 
 public class TestCommand extends Command {
 
@@ -31,12 +32,16 @@ public class TestCommand extends Command {
 
             EntityCreature npc = new EntityCreature(EntityType.PLAYER);
             npc.setInstance(player.getInstance(), player.getPosition());
-
-            player.getPlayerConnection().sendPacket(PacketUtil.addPlayerInfoPacket(npc.getUuid(), StringUtil.randomString(8), PlayerSkin.fromUuid(player.getUuid().toString())));
-            npc.updateNewViewer(player);
-
             npc.addAIGroup(new EntityAIGroupBuilder().addGoalSelector(new RandomStrollGoal(npc, 5)).addGoalSelector(new DoNothingGoal(npc, 8 * 20, 100)).build());
-            player.sendMessage(Component.text("NPC spawned!", NamedTextColor.YELLOW));
+
+            PlayerInfoPacket packet = PacketUtil.addPlayerInfoPacket(npc.getUuid(), StringUtil.randomString(8), PlayerSkin.fromUuid(player.getUuid().toString()));
+
+            for (Player players : MinecraftServer.getConnectionManager().getOnlinePlayers()) {
+                players.getPlayerConnection().sendPacket(packet);
+                npc.updateNewViewer(players);
+
+                players.sendMessage(Component.text("NPC spawned!", NamedTextColor.YELLOW));
+            }
         }));
 
         var npcSkin = ArgumentType.String("npcSkinName");
@@ -55,8 +60,10 @@ public class TestCommand extends Command {
             npc.setInstance(player.getInstance(), player.getPosition());
             npc.addAIGroup(new EntityAIGroupBuilder().addGoalSelector(new RandomStrollGoal(npc, 5)).addGoalSelector(new DoNothingGoal(npc, 8 * 20, 100)).build());
 
+            PlayerInfoPacket packet = PacketUtil.addPlayerInfoPacket(npc.getUuid(), StringUtil.randomString(8), PlayerSkin.fromUsername(npcSkinName));
+
             for (Player players : MinecraftServer.getConnectionManager().getOnlinePlayers()) {
-                players.getPlayerConnection().sendPacket(PacketUtil.addPlayerInfoPacket(npc.getUuid(), StringUtil.randomString(8), PlayerSkin.fromUsername(npcSkinName)));
+                players.getPlayerConnection().sendPacket(packet);
                 npc.updateNewViewer(players);
 
                 players.sendMessage(Component.text("NPC spawned!", NamedTextColor.YELLOW));
@@ -77,8 +84,10 @@ public class TestCommand extends Command {
                 npc.setInstance(player.getInstance(), player.getPosition());
                 npc.addAIGroup(new EntityAIGroupBuilder().addGoalSelector(new RandomStrollGoal(npc, 5)).addGoalSelector(new DoNothingGoal(npc, 8 * 20, 100)).build());
 
+                PlayerInfoPacket packet = PacketUtil.addPlayerInfoPacket(npc.getUuid(), StringUtil.randomString(8), PlayerSkin.fromUsername(npcSkinName));
+
                 for (Player players : MinecraftServer.getConnectionManager().getOnlinePlayers()) {
-                    players.getPlayerConnection().sendPacket(PacketUtil.addPlayerInfoPacket(npc.getUuid(), StringUtil.randomString(8), PlayerSkin.fromUsername(npcSkinName)));
+                    players.getPlayerConnection().sendPacket(packet);
                     npc.updateNewViewer(players);
 
                     players.sendMessage(Component.text("NPC spawned!", NamedTextColor.YELLOW));

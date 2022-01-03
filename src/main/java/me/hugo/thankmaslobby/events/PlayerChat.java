@@ -44,7 +44,7 @@ public class PlayerChat {
                 /*
                 If the state id is 0 it means their chat is enabled.
                  */
-                if(players.getState(optionManager.CHAT).getStateId() == 0) player.sendMessage(chatMessage);
+                if(players.getState(optionManager.CHAT).getStateId() == 0) players.getPlayer().sendMessage(chatMessage);
             }
 
             System.out.println(player.getUsername() + " said '" + event.getMessage() + "'.");

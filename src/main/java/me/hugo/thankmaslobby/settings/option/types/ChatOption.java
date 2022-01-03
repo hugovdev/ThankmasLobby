@@ -57,7 +57,7 @@ public class ChatOption implements Option {
         return Arrays.asList(Component.text("Enable or disable chat", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
                 Component.text("messages on the lobby!", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
                 Component.text(""),
-                isGlassPane ? Component.text(state.getStateName(), state.getStateColor()).decoration(TextDecoration.ITALIC, false) : Component.text("Click to change!", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
+                Component.text("Click to change!", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
     }
 
     @Override

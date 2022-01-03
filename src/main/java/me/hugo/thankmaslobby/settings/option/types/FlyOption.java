@@ -23,7 +23,7 @@ public class FlyOption implements Option {
 
     @Override
     public boolean run(GamePlayer playerData, OptionState state, boolean inventoryClick) {
-        if (playerData.isDonator("Flight Mode")) {
+        if (playerData.isDonator("to use", "Flight Mode")) {
             boolean isEnabled = state.getStateId() == 1;
             playerData.getPlayer().sendMessage(Component.text("You ", NamedTextColor.YELLOW)
                     .append(Component.text((isEnabled ? "enabled" : "disabled"), isEnabled ? NamedTextColor.GREEN : NamedTextColor.RED))
@@ -58,7 +58,7 @@ public class FlyOption implements Option {
         return Arrays.asList(Component.text("Enable or disable your", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
                 Component.text("ability to fly!", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
                 Component.text(""),
-                isGlassPane ? Component.text(state.getStateName(), state.getStateColor()).decoration(TextDecoration.ITALIC, false) : Component.text("Click to change!", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
+                Component.text("Click to change!", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
     }
 
     @Override

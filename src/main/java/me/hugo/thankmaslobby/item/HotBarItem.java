@@ -39,8 +39,8 @@ public enum HotBarItem {
     }, 1),
     SECRETS(ItemStack.of(Material.TURTLE_EGG).withDisplayName(Component.text("Secret Tracker").color(NamedTextColor.GREEN)
             .append(Component.text(" (Right Click)").color(NamedTextColor.GRAY)).decoration(TextDecoration.ITALIC, false)).withLore(
-            Arrays.asList(Component.text("Learn more about Hytale Thankmas").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
-                    Component.text("and the server you are on!").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
+            Arrays.asList(Component.text("Track all the screts you have found").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
+                    Component.text("or the ones you have yet to find!").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
                     Component.text(""),
                     Component.text("Click to open!").color(NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false))
     ), player -> {
@@ -55,7 +55,7 @@ public enum HotBarItem {
     ), player -> {
         GamePlayer gamePlayer = ThankmasLobby.getInstance().getPlayerManager().getPlayerData(player);
 
-        if (gamePlayer.isDonator("Ride Pearl")) {
+        if (gamePlayer.isDonator("to use", "Ride Pearl")) {
             player.playSound(Sound.sound(Key.key("minecraft:entity.enderman.teleport"), Sound.Source.AMBIENT, 1.0f, 1.0f));
             Entity vehicle = player.getVehicle();
 

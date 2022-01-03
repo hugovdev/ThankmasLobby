@@ -25,9 +25,11 @@ public class OptionState {
         this.stateName = stateName;
         this.option = option;
 
-        this.menuIcon = ItemStack.of(stateIcon).withDisplayName(Component.text(option.getName(), stateColor).decoration(TextDecoration.ITALIC, false))
+        this.menuIcon = ItemStack.of(stateIcon).withDisplayName(Component.text(option.getName() + " - ", stateColor).decoration(TextDecoration.ITALIC, false)
+                        .append(Component.text(stateName).decoration(TextDecoration.BOLD, true)))
                 .withLore(option.getDescription(this, false));
-        this.toggleMenuIcon = ItemStack.of(stateToggleIcon).withDisplayName(Component.text(option.getName(), stateColor).decoration(TextDecoration.ITALIC, false))
+        this.toggleMenuIcon = ItemStack.of(stateToggleIcon).withDisplayName(Component.text(option.getName() + " - ", stateColor).decoration(TextDecoration.ITALIC, false)
+                        .append(Component.text(stateName).decoration(TextDecoration.BOLD, true)))
                 .withLore(option.getDescription(this, true));
     }
 

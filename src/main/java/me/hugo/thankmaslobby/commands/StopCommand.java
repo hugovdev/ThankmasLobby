@@ -1,7 +1,6 @@
 package me.hugo.thankmaslobby.commands;
 
 import me.hugo.thankmaslobby.ThankmasLobby;
-import me.hugo.thankmaslobby.games.Game;
 import me.hugo.thankmaslobby.player.GamePlayer;
 import me.hugo.thankmaslobby.player.rank.Rank;
 import net.kyori.adventure.text.Component;
@@ -11,6 +10,7 @@ import net.minestom.server.command.builder.Command;
 import net.minestom.server.entity.Player;
 
 public class StopCommand extends Command {
+
     public StopCommand() {
         super("stop", "close", "bye");
 

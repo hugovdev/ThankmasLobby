@@ -15,6 +15,7 @@ import me.hugo.thankmaslobby.util.StringUtils;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.MinecraftServer;
@@ -66,7 +67,7 @@ public class GamePlayer {
         initUnlockedSecrets();
 
         /* Get from local storage */
-        this.rank = Rank.DONATOR;
+        this.rank = Rank.USER;
     }
 
     private void initOptions() {
@@ -106,10 +107,9 @@ public class GamePlayer {
 
                         settingsMenu.setItemStack(option.getSlot(), newOptionState.getMenuIcon());
                         settingsMenu.setItemStack(option.getSlot() + 9, newOptionState.getToggleMenuIcon());
-
-                        player.playSound(Sound.sound(Key.key("minecraft:block.note_block.hat"), Sound.Source.AMBIENT, 1.0f, 1.0f));
                     }
 
+                    player.playSound(Sound.sound(Key.key("minecraft:block.note_block.hat"), Sound.Source.AMBIENT, 1.0f, 1.3f));
                     break;
                 }
             }
@@ -129,9 +129,7 @@ public class GamePlayer {
         secretsMenu.addInventoryCondition((player, i, clickType, inventoryConditionResult) -> {
             SecretCategory secretCategory = secretCategoryManager.getSecretCategorySlots().get(i);
 
-            if(secretCategory != null) {
-                secretCategory.getSecretChecker().openMenu(this);
-            }
+            if (secretCategory != null) secretCategory.getSecretChecker().openMenu(this);
         });
     }
 
@@ -215,21 +213,33 @@ public class GamePlayer {
         return rank;
     }
 
-    public boolean isDonator(String perk) {
+    public boolean isDonator(String verb, String perk) {
         if (this.rank.getValue() > 0) {
             return true;
         } else {
-            if (perk != null) sendDonatorMessage(perk);
+            if (perk != null) sendDonatorMessage(verb, perk);
             return false;
         }
     }
 
-    public void sendDonatorMessage(String perk) {
-        this.player.sendMessage(Component.text("Only ", NamedTextColor.RED)
-                .append(Component.text("Donators", NamedTextColor.YELLOW))
-                .append(Component.text(" can use ", NamedTextColor.RED))
+    public void sendDonatorMessage(String verb, String perk) {
+        this.player.sendMessage(Component.text("You need to be ", NamedTextColor.RED)
+                .append(Component.text("Donator", NamedTextColor.YELLOW))
+                .append(Component.text(" " + verb + " ", NamedTextColor.RED))
                 .append(Component.text(perk, NamedTextColor.AQUA))
-                .append(Component.text(", please donate to get access to all the perks!", NamedTextColor.RED)));
+                .append(Component.text(", please donate on the ", NamedTextColor.RED))
+                .append(Component.text("EVENT PAGE", NamedTextColor.GREEN).decorate(TextDecoration.BOLD)
+                        .hoverEvent(Component.text("Open Site", NamedTextColor.GREEN)
+                                .append(Component.newline())
+                                .append(Component.newline())
+                                .append(Component.text("Donation site to get", NamedTextColor.GRAY))
+                                .append(Component.newline())
+                                .append(Component.text("all the perks.", NamedTextColor.GRAY))
+                                .append(Component.newline())
+                                .append(Component.newline())
+                                .append(Component.text("Click to open!", NamedTextColor.GOLD)))
+                        .clickEvent(ClickEvent.openUrl("https://www.donationsite.com")))
+                .append(Component.text(" to get all the perks!", NamedTextColor.RED).decoration(TextDecoration.BOLD, false)));
     }
 
     public PaginatedGUI getSecretsMenu() {

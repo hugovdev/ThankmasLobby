@@ -29,9 +29,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerSkin;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.extras.MojangAuth;
-import net.minestom.server.instance.Instance;
-import net.minestom.server.instance.InstanceContainer;
-import net.minestom.server.instance.InstanceManager;
+import net.minestom.server.instance.*;
 import net.minestom.server.monitoring.BenchmarkManager;
 import net.minestom.server.monitoring.TickMonitor;
 import net.minestom.server.utils.MathUtils;
@@ -137,8 +135,9 @@ public class ThankmasLobby {
         if (!MinecraftServer.getDimensionTypeManager().isRegistered(DIMENSION_ID))
             MinecraftServer.getDimensionTypeManager().addDimension(DIMENSION_TYPE);
 
+        AnvilLoader anvilLoader = new AnvilLoader("lobby");
         InstanceManager instanceManager = MinecraftServer.getInstanceManager();
-        InstanceContainer instanceContainer = instanceManager.createInstanceContainer(DIMENSION_TYPE);
+        InstanceContainer instanceContainer = instanceManager.createInstanceContainer(DIMENSION_TYPE, anvilLoader);
         instanceContainer.setChunkGenerator(new EmptyGenerator());
 
         MinecraftServer.getInstanceManager().registerInstance(instanceContainer);

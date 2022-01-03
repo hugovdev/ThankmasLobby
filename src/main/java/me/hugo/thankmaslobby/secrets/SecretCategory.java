@@ -57,7 +57,7 @@ public class SecretCategory {
 
         lore.add(Component.empty());
 
-        lore.add(Component.text("Progress: ", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)
+        lore.add(Component.text("Your Progress: ", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)
                 .append(Component.text(getSecretChecker().checkUnlocked(gamePlayer) + "/" + getMaximum(), NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)));
 
         lore.add(Component.empty());

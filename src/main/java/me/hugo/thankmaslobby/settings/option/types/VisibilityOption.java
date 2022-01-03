@@ -57,7 +57,7 @@ public class VisibilityOption implements Option {
         return Arrays.asList(Component.text("Enable or disable player", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
                 Component.text("visibility on the lobby!", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
                 Component.text(""),
-                isGlassPane ? Component.text(state.getStateName(), state.getStateColor()).decoration(TextDecoration.ITALIC, false) : Component.text("Click to change!", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
+                Component.text("Click to change!", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
     }
 
     @Override
