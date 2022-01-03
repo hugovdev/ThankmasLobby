@@ -1,7 +1,7 @@
 package me.hugo.thankmaslobby.secrets;
 
 import me.hugo.thankmaslobby.player.GamePlayer;
-import me.hugo.thankmaslobby.util.StringUtils;
+import me.hugo.thankmaslobby.util.StringUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -52,7 +52,7 @@ public class SecretCategory {
         lore.add(Component.text("Secret Category", NamedTextColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false));
         lore.add(Component.empty());
 
-        for (String loreLine : StringUtils.wrapLine(getDescription(), 30))
+        for (String loreLine : StringUtil.wrapLine(getDescription(), 30))
             lore.add(Component.text(loreLine, NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
 
         lore.add(Component.empty());

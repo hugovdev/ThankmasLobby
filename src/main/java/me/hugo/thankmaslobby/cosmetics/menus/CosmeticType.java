@@ -1,8 +1,7 @@
 package me.hugo.thankmaslobby.cosmetics.menus;
 
-import me.hugo.thankmaslobby.util.StringUtils;
+import me.hugo.thankmaslobby.util.StringUtil;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.inventory.Inventory;
@@ -33,7 +32,7 @@ public enum CosmeticType {
     CosmeticType(ItemStackBuilder icon, String name, String description, int slot, Inventory nextMenu) {
         List<Component> loreLines = new ArrayList<>();
 
-        for (String line : StringUtils.wrapLine(description, 30)) {
+        for (String line : StringUtil.wrapLine(description, 30)) {
             loreLines.add(Component.text(line, NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
         }
 
