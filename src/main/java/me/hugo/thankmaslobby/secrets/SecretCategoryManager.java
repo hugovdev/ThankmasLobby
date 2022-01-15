@@ -30,7 +30,7 @@ public class SecretCategoryManager {
                     public void openMenu(GamePlayer gamePlayer) {
                         gamePlayer.getUnlockedNPCMenu().open(gamePlayer.getPlayer());
                     }
-                }, EasterEggNPC.values().length);
+                }, 0);
 
         secretCategorySlots.put(11, NPC_CATEGORY);
 

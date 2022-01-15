@@ -27,6 +27,11 @@
       <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="crystalgames" />
+      <option name="name" value="crystalgames" />
+      <option name="url" value="https://repo.crystalgames.net/snapshots/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="SpongePowered" />
       <option name="name" value="SpongePowered" />
       <option name="url" value="https://repo.spongepowered.org/maven" />

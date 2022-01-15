@@ -15,11 +15,6 @@ import net.kyori.adventure.util.TriState;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.*;
-import net.minestom.server.entity.ai.EntityAIGroup;
-import net.minestom.server.entity.ai.EntityAIGroupBuilder;
-import net.minestom.server.entity.ai.goal.DoNothingGoal;
-import net.minestom.server.entity.ai.goal.RandomLookAroundGoal;
-import net.minestom.server.entity.ai.goal.RandomStrollGoal;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
@@ -29,38 +24,78 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
-public enum EasterEggNPC {
+public class EasterEggNPC {
 
-    KWEEBEC_CORNER(0, "Kweebec Corner", PlayerSkin.fromUsername("KweebecCorner"), new Pos(-6.5, 40, 14.5, -90, 0), "Stay safe and keep free!"),
-    EFS3(1, "EFS3", PlayerSkin.fromUsername("EFS3"), new Pos(11, 40, 13.5, 140, 0), "ඞ"),
-    BUDDHACAT(2, "BuddhaCat", PlayerSkin.fromUsername("BuddhaCat"), new Pos(6.5, 40, 23.5, 160, 0), "Remember to ask me what phrase I want for my NPC!"),
+    /*KWEEBEC_CORNER(0, "Kweebec Corner", PlayerSkin.fromUsername("KweebecCorner"), new Pos(-31.7, 79, 38.7, 46, 10), "Stay safe and keep free!"),
+    EFS3(1, "EFS3", PlayerSkin.fromUsername("EFS3"), new Pos(11, 40, 13.5, 140, 0), "ඞ", "sus"),
+    BUDDHACAT(2, "BuddhaCat", PlayerSkin.fromUsername("BuddhaCat"), new Pos(41.5, 65, -10.5, 70, 0), "Remember to ask me what phrase I want for my NPC!"),
     CANADIAN_FLASH(3, "CanadianFlash", PlayerSkin.fromUsername("CanadianFlash"), new Pos(10.5, 40, 16.5, 160, 0), "I'm CanadianFlash and I'm always late!"),
-    PROPZIE(4, "Propzie", PlayerSkin.fromUsername("Propzie"), new Pos(-5.5, 40, 32.5, 160, 0), "Propzie!");
+    PROPZIE(4, "Propzie", PlayerSkin.fromUsername("Propzie"), new Pos(-5.5, 40, 32.5, 160, 0), "Propzie!"),
+    POWERBYTE7(5, "Powerbyte7", PlayerSkin.fromUsername("Powerbyte7"), new Pos(26.5, 68, 3.5, 50, 0),
+            "I don't know why people say I hate Kweebecs. I just have a passion for pyrotechnics, that's completely different!"),
+    BLITZ_STRIKE(5, "BlitzStrike_", PlayerSkin.fromUsername("BlitzStrike_"), new Pos(-5.5, 67, 53.5, 160, 20), "Hello!"),
+    NOXY(6, "NoxyD", PlayerSkin.fromUsername("NoxyD"), new Pos(29.5, 78, 42.5, 120, 20), "Hello!"),
+    ACORN(7, "TheCrispyAcorn", PlayerSkin.fromUsername("TheCrispyAcorn"), new Pos(-34.5, 70, 58.5, 90, 0),
+            "If I wait any longer I might turn into a tree.");*/
 
-    private final int id;
-    private final String name;
-    private final PlayerSkin npcSkin;
-    private Pos npcPosition;
+    private int id;
+    private String name;
+
     private String[] dialogue;
 
-    private final TextNPC npc;
+    private String textureValue;
+    private String textureSignature;
 
-    private ItemStack lockedState, unlockedState;
+    private double x, y, z;
+    private float yaw, pitch;
 
-    EasterEggNPC(int id, String name, PlayerSkin npcSkin, Pos npcPosition, String... dialogue) {
+    private transient Pos npcPosition;
+    private transient TextNPC npc;
+    private transient PlayerSkin npcSkin;
+    private transient ItemStack lockedState, unlockedState;
+
+    public EasterEggNPC(int id, String name, String textureValue, String textureSignature, Pos npcPosition, String... dialogue) {
         this.id = id;
         this.name = name;
+        this.npcSkin = new PlayerSkin(textureValue, textureSignature);
+        this.dialogue = dialogue;
+        this.npcPosition = npcPosition;
+
+        this.x = npcPosition.x();
+        this.y = npcPosition.y();
+        this.z = npcPosition.z();
+
+        this.yaw = npcPosition.yaw();
+        this.pitch = npcPosition.pitch();
+    }
+
+    public EasterEggNPC(int id, String name, PlayerSkin npcSkin, Pos npcPosition, String... dialogue) {
+        this.id = id;
+        this.name = name;
+        this.textureValue = npcSkin.textures();
+        this.textureSignature = npcSkin.signature();
         this.npcSkin = npcSkin;
         this.dialogue = dialogue;
         this.npcPosition = npcPosition;
 
+        this.x = npcPosition.x();
+        this.y = npcPosition.y();
+        this.z = npcPosition.z();
+
+        this.yaw = npcPosition.yaw();
+        this.pitch = npcPosition.pitch();
+    }
+
+    public void spawnNPC() {
         Instance instance = MinecraftServer.getInstanceManager().getInstances().iterator().next();
 
-        // We create a TextNPC on the specified position, with the specified skin and properties.
-        this.npc = new TextNPC(instance, this.npcPosition, this.npcSkin, TriState.TRUE, getNPCInteraction(), Component.text(this.name, NamedTextColor.AQUA),
-                Component.text("CLICK", NamedTextColor.YELLOW).decorate(TextDecoration.BOLD));
+        if (this.npcSkin == null || this.npcPosition == null) {
+            this.npcSkin = new PlayerSkin(textureValue, textureSignature);
+            this.npcPosition = new Pos(this.x, this.y, this.z, this.yaw, this.pitch);
+        }
 
-        // We create the icons for both the locked and unlocked npc for menus.
+        this.npc = new TextNPC(instance, this.npcPosition, this.npcSkin, TriState.TRUE, getNPCInteraction(), Component.text(this.name, NamedTextColor.AQUA), Component.text("CLICK", NamedTextColor.YELLOW).decorate(TextDecoration.BOLD));
+
         buildMenuIcons();
     }
 
@@ -93,7 +128,7 @@ public enum EasterEggNPC {
 
     private void sendUnlockMessage(GamePlayer gamePlayer) {
         Player player = gamePlayer.getPlayer();
-        String unlockedNPCs = gamePlayer.getUnlockedNPCs().size() + "/" + EasterEggNPC.values().length;
+        String unlockedNPCs = gamePlayer.getUnlockedNPCs().size() + "/0";
 
         /*
         Hover state for the message to be sent.
@@ -156,17 +191,5 @@ public enum EasterEggNPC {
 
     public String getName() {
         return name;
-    }
-
-    public PlayerSkin getNpcSkin() {
-        return npcSkin;
-    }
-
-    public String[] getDialogue() {
-        return dialogue;
-    }
-
-    public TextNPC getNpc() {
-        return npc;
     }
 }

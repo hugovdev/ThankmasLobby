@@ -25,14 +25,12 @@ public class StringUtil {
         List<String> stringList = new ArrayList<>();
         StringBuilder trimmedLine = new StringBuilder();
         for (String word : words) {
-            if (trimmedLine.length() + 1 + word.length() <= lineLength) {
-                trimmedLine.append(word).append(" ");
-            } else {
+            if (trimmedLine.length() + 1 + word.length() > lineLength) {
                 stringList.add(trimmedLine.toString());
                 allLines.append(trimmedLine).append(LINEBREAK);
                 trimmedLine = new StringBuilder();
-                trimmedLine.append(word).append(" ");
             }
+            trimmedLine.append(word).append(" ");
         }
         if (trimmedLine.length() > 0) {
             stringList.add(trimmedLine.toString());
