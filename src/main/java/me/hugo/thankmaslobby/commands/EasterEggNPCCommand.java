@@ -70,6 +70,7 @@ public class EasterEggNPCCommand extends Command {
 
                 newList.add(easterEggNPC);
                 npcManager.writeNewList(newList);
+                npcManager.setEasterEggNPCs(newList);
                 player.sendMessage(Component.text("Added NPC of " + skinPlayerName + "!", NamedTextColor.YELLOW));
 
                 easterEggNPC.spawnNPC();

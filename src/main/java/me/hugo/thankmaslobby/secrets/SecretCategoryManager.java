@@ -2,6 +2,7 @@ package me.hugo.thankmaslobby.secrets;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import me.hugo.thankmaslobby.ThankmasLobby;
 import me.hugo.thankmaslobby.lobbynpc.EasterEggNPC;
 import me.hugo.thankmaslobby.player.GamePlayer;
 import net.minestom.server.item.ItemStack;
@@ -30,7 +31,7 @@ public class SecretCategoryManager {
                     public void openMenu(GamePlayer gamePlayer) {
                         gamePlayer.getUnlockedNPCMenu().open(gamePlayer.getPlayer());
                     }
-                }, 0);
+                }, ThankmasLobby.getInstance().getEasterEggNPCManager().getMaxNPCs());
 
         secretCategorySlots.put(11, NPC_CATEGORY);
 

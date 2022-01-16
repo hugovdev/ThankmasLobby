@@ -43,9 +43,6 @@ public class EasterEggNPC {
 
     private String[] dialogue;
 
-    private String textureValue;
-    private String textureSignature;
-
     private double x, y, z;
     private float yaw, pitch;
 
@@ -54,10 +51,10 @@ public class EasterEggNPC {
     private transient PlayerSkin npcSkin;
     private transient ItemStack lockedState, unlockedState;
 
-    public EasterEggNPC(int id, String name, String textureValue, String textureSignature, Pos npcPosition, String... dialogue) {
+    public EasterEggNPC(int id, String name, Pos npcPosition, String... dialogue) {
         this.id = id;
         this.name = name;
-        this.npcSkin = new PlayerSkin(textureValue, textureSignature);
+        this.npcSkin =  PlayerSkin.fromUsername(name);
         this.dialogue = dialogue;
         this.npcPosition = npcPosition;
 
@@ -72,8 +69,6 @@ public class EasterEggNPC {
     public EasterEggNPC(int id, String name, PlayerSkin npcSkin, Pos npcPosition, String... dialogue) {
         this.id = id;
         this.name = name;
-        this.textureValue = npcSkin.textures();
-        this.textureSignature = npcSkin.signature();
         this.npcSkin = npcSkin;
         this.dialogue = dialogue;
         this.npcPosition = npcPosition;
@@ -90,7 +85,7 @@ public class EasterEggNPC {
         Instance instance = MinecraftServer.getInstanceManager().getInstances().iterator().next();
 
         if (this.npcSkin == null || this.npcPosition == null) {
-            this.npcSkin = new PlayerSkin(textureValue, textureSignature);
+            this.npcSkin = PlayerSkin.fromUsername(this.name);
             this.npcPosition = new Pos(this.x, this.y, this.z, this.yaw, this.pitch);
         }
 
@@ -128,7 +123,11 @@ public class EasterEggNPC {
 
     private void sendUnlockMessage(GamePlayer gamePlayer) {
         Player player = gamePlayer.getPlayer();
-        String unlockedNPCs = gamePlayer.getUnlockedNPCs().size() + "/0";
+
+        int unlockedNumber = gamePlayer.getUnlockedNPCs().size();
+        int maxNPCs = ThankmasLobby.getInstance().getEasterEggNPCManager().getMaxNPCs();
+
+        String unlockedNPCs = unlockedNumber + "/" + maxNPCs;
 
         /*
         Hover state for the message to be sent.
@@ -153,6 +152,12 @@ public class EasterEggNPC {
 
         // We send it
         player.sendMessage(npcUnlockMessage);
+
+        if (unlockedNumber == maxNPCs) {
+            player.sendMessage(Component.text("You have unlocked all of the ", NamedTextColor.GREEN)
+                    .append(Component.text(maxNPCs, NamedTextColor.AQUA))
+                    .append(Component.text(" NPCs!", NamedTextColor.GREEN)));
+        }
     }
 
     private void buildMenuIcons() {

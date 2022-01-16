@@ -125,10 +125,8 @@ public class ThankmasLobby {
         for (ServerJoinNPC lobbyNPC : ServerJoinNPC.values())
             System.out.println("[Server NPC] '" + lobbyNPC.getServerName() + "' has been registered!");
 
-        /*for (EasterEggNPC easterEggNPC : EasterEggNPC.values())
-            System.out.println("[EasterEgg NPC] '" + easterEggNPC.getName() + "' has been registered!");*/
-
         getInstance().easterEggNPCManager = new EasterEggNPCManager();
+        getInstance().secretCategoryManager = new SecretCategoryManager();
 
         for (LabelHolograms labelHologram : LabelHolograms.values())
             System.out.println("[Label Holograms] '" + labelHologram.getBuildName() + "' label hologram loaded!");
@@ -187,7 +185,6 @@ public class ThankmasLobby {
     private void initManagers() {
         playerManager = new PlayerManager();
         optionManager = new OptionManager();
-        secretCategoryManager = new SecretCategoryManager();
     }
 
     private void startBenchmark() {

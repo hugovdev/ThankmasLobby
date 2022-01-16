@@ -1,6 +1,7 @@
 package me.hugo.thankmaslobby.player;
 
 import me.hugo.thankmaslobby.ThankmasLobby;
+import me.hugo.thankmaslobby.config.EasterEggNPCManager;
 import me.hugo.thankmaslobby.lobbynpc.EasterEggNPC;
 import me.hugo.thankmaslobby.player.rank.Rank;
 import me.hugo.thankmaslobby.secrets.SecretCategory;
@@ -126,16 +127,17 @@ public class GamePlayer {
     }
 
     private void initUnlockedSecrets() {
+        EasterEggNPCManager npcManager = this.main.getEasterEggNPCManager();
         unlockedNPCMenu = new PaginatedGUI(InventoryType.CHEST_4_ROW, ItemStack.of(Material.IRON_HELMET).withDisplayName(Component.text("Secret NPCs", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false)),
                 "Secret NPCs", PaginatedGUI.PageFormat.TWO_ROWS, secretsMenu.getPages().get(0));
 
-        /*for (EasterEggNPC easterEggNPC : EasterEggNPC.values())
+        for (EasterEggNPC easterEggNPC : npcManager.getEasterEggNPCs())
             unlockedNPCMenu.addItem(unlockedNPCs.contains(easterEggNPC) ? easterEggNPC.getUnlockedState() : easterEggNPC.getLockedState());
 
         unlockedNPCMenu.addInventoryCondition((playerWhoClicked, i, clickType, inventoryConditionResult) -> {
             if (inventoryConditionResult.getClickedItem().getMaterial() != Material.PLAYER_HEAD) return;
 
-            for (EasterEggNPC easterEggNPC : EasterEggNPC.values()) {
+            for (EasterEggNPC easterEggNPC : npcManager.getEasterEggNPCs()) {
                 if (inventoryConditionResult.getClickedItem() == easterEggNPC.getUnlockedState()) {
                     playerWhoClicked.closeInventory();
 
@@ -150,7 +152,7 @@ public class GamePlayer {
             }
 
             playerWhoClicked.sendMessage(Component.text("You have not unlocked this secret NPC!", NamedTextColor.RED));
-        });*/
+        });
     }
 
     public void loadSidebar() {
@@ -174,7 +176,7 @@ public class GamePlayer {
                 .append(Component.text("0").color(NamedTextColor.GREEN)), 5));
         scoreboard.createLine(new Sidebar.ScoreboardLine("space4", Component.text(" ", NamedTextColor.LIGHT_PURPLE), 4));
         scoreboard.createLine(new Sidebar.ScoreboardLine("secretCounter", Component.text("Secrets Found: ").color(NamedTextColor.WHITE)
-                .append(Component.text(this.unlockedNPCs.size() + "/0"/*TODO*/).color(NamedTextColor.GREEN)), 3));
+                .append(Component.text(this.unlockedNPCs.size() + "/" + this.main.getEasterEggNPCManager().getMaxNPCs()).color(NamedTextColor.GREEN)), 3));
         scoreboard.createLine(new Sidebar.ScoreboardLine("space5", Component.text(" ", NamedTextColor.YELLOW), 2));
         scoreboard.createLine(new Sidebar.ScoreboardLine("ip", Component.text("events.thoriumcu.be").color(NamedTextColor.YELLOW), 1));
 
@@ -190,11 +192,11 @@ public class GamePlayer {
 
     public void updateSecretCounter() {
         scoreboard.updateLineContent("secretCounter", Component.text("Secrets Found: ").color(NamedTextColor.WHITE)
-                .append(Component.text(this.unlockedNPCs.size() + "/" + "0" /*TODO*/).color(NamedTextColor.GREEN)));
+                .append(Component.text(this.unlockedNPCs.size() + "/" + this.main.getEasterEggNPCManager().getMaxNPCs()).color(NamedTextColor.GREEN)));
     }
 
     public void updateCategory(SecretCategory secretCategory) {
-        secretsMenu.setItem(secretCategory.getMenuIcon(this), 0, main.getSecretCategoryManager().getSecretCategorySlots().inverse().get(secretCategory));
+        secretsMenu.setItem(secretCategory.getMenuIcon(this), 0, this.main.getSecretCategoryManager().getSecretCategorySlots().inverse().get(secretCategory));
     }
 
     public PaginatedGUI getUnlockedNPCMenu() {

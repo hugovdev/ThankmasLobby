@@ -89,7 +89,7 @@ public class PaginatedGUI {
         List<Integer> slots = pageFormat.getFormatSlots();
         int slot = slots.get(index);
 
-        if (inventory.getItemStack(slot).getMaterial() != Material.AIR) {
+        if (inventory.getItemStack(slot) == null || inventory.getItemStack(slot).getMaterial() != Material.AIR) {
             while (inventory.getItemStack(slot).getMaterial() != Material.AIR) {
                 index++;
                 slot = slots.get(index);

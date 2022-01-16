@@ -21,6 +21,7 @@ import java.util.List;
 public class EasterEggNPCManager {
 
     private List<EasterEggNPC> easterEggNPCs;
+    private int maxNPCs;
 
     @SneakyThrows
     public EasterEggNPCManager() {
@@ -44,8 +45,11 @@ public class EasterEggNPCManager {
             for (EasterEggNPC easterEggNPC : this.easterEggNPCs) {
                 easterEggNPC.spawnNPC();
             }
-        } else
+            this.maxNPCs = easterEggNPCs.size();
+        } else {
             System.out.println("No easter egg NPCs were loaded! (File is empty!)");
+            this.maxNPCs = 0;
+        }
     }
 
     @SneakyThrows
@@ -71,5 +75,18 @@ public class EasterEggNPCManager {
         File easterEggNPCs = new File(dataFolder, "easterEggNPCLocations.json");
 
         FileUtils.writeStringToFile(easterEggNPCs, ThankmasLobby.GSON.toJson(newList), Charset.defaultCharset());
+    }
+
+    public void setEasterEggNPCs(List<EasterEggNPC> easterEggNPCs) {
+        this.easterEggNPCs = easterEggNPCs;
+        this.maxNPCs = easterEggNPCs.size();
+    }
+
+    public int getMaxNPCs() {
+        return maxNPCs;
+    }
+
+    public List<EasterEggNPC> getEasterEggNPCs() {
+        return easterEggNPCs;
     }
 }
