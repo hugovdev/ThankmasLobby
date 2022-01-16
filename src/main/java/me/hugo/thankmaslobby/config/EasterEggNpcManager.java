@@ -1,30 +1,27 @@
 package me.hugo.thankmaslobby.config;
 
 import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import lombok.SneakyThrows;
 import me.hugo.thankmaslobby.ThankmasLobby;
-import me.hugo.thankmaslobby.lobbynpc.EasterEggNPC;
+import me.hugo.thankmaslobby.lobbynpc.EasterEggNpc;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EasterEggNPCManager {
+public class EasterEggNpcManager {
 
-    private List<EasterEggNPC> easterEggNPCs;
+    private List<EasterEggNpc> easterEggNPCs;
     private int maxNPCs;
 
     @SneakyThrows
-    public EasterEggNPCManager() {
+    public EasterEggNpcManager() {
         File dataFolder = new File("serverData");
         dataFolder.mkdirs();
         File npcsFile = new File(dataFolder, "easterEggNPCLocations.json");
@@ -34,18 +31,23 @@ public class EasterEggNPCManager {
 
         JsonElement jsonElement = JsonParser.parseReader(new FileReader(npcsFile));
 
-        Type type = new TypeToken<List<EasterEggNPC>>() {
+        Type type = new TypeToken<List<EasterEggNpc>>() {
         }.getType();
 
         this.easterEggNPCs = ThankmasLobby.GSON.fromJson(jsonElement, type);
 
         if (this.easterEggNPCs != null) {
-            System.out.println("Loaded " + this.easterEggNPCs.size() + " easter egg npcs!");
-
-            for (EasterEggNPC easterEggNPC : this.easterEggNPCs) {
-                easterEggNPC.spawnNPC();
-            }
             this.maxNPCs = easterEggNPCs.size();
+
+            System.out.println("Loaded " + this.maxNPCs + " easter egg npcs!");
+            System.out.println("Spawning them...");
+
+            for (EasterEggNpc easterEggNPC : this.easterEggNPCs) {
+                easterEggNPC.spawnNpc();
+                System.out.println("Spawned NPC for " + easterEggNPC.getName() + "!");
+            }
+
+            System.out.println("All the NPCs have been spawned!");
         } else {
             System.out.println("No easter egg NPCs were loaded! (File is empty!)");
             this.maxNPCs = 0;
@@ -53,16 +55,16 @@ public class EasterEggNPCManager {
     }
 
     @SneakyThrows
-    public List<EasterEggNPC> getEasterEggNPCsFromFile() {
+    public List<EasterEggNpc> getEasterEggNPCsFromFile() {
         File dataFolder = new File("serverData");
         File easterEggNPCs = new File(dataFolder, "easterEggNPCLocations.json");
 
         JsonElement jsonElement = JsonParser.parseReader(new FileReader(easterEggNPCs));
 
-        Type type = new TypeToken<List<EasterEggNPC>>() {
+        Type type = new TypeToken<List<EasterEggNpc>>() {
         }.getType();
 
-        List<EasterEggNPC> list = ThankmasLobby.GSON.fromJson(jsonElement, type);
+        List<EasterEggNpc> list = ThankmasLobby.GSON.fromJson(jsonElement, type);
 
         if (list == null) list = new ArrayList<>();
 
@@ -70,14 +72,14 @@ public class EasterEggNPCManager {
     }
 
     @SneakyThrows
-    public void writeNewList(List<EasterEggNPC> newList) {
+    public void writeNewList(List<EasterEggNpc> newList) {
         File dataFolder = new File("serverData");
         File easterEggNPCs = new File(dataFolder, "easterEggNPCLocations.json");
 
         FileUtils.writeStringToFile(easterEggNPCs, ThankmasLobby.GSON.toJson(newList), Charset.defaultCharset());
     }
 
-    public void setEasterEggNPCs(List<EasterEggNPC> easterEggNPCs) {
+    public void setEasterEggNPCs(List<EasterEggNpc> easterEggNPCs) {
         this.easterEggNPCs = easterEggNPCs;
         this.maxNPCs = easterEggNPCs.size();
     }
@@ -86,7 +88,7 @@ public class EasterEggNPCManager {
         return maxNPCs;
     }
 
-    public List<EasterEggNPC> getEasterEggNPCs() {
+    public List<EasterEggNpc> getEasterEggNPCs() {
         return easterEggNPCs;
     }
 }

@@ -1,21 +1,17 @@
 package me.hugo.thankmaslobby;
 
 import com.google.gson.Gson;
-import kotlin.reflect.jvm.internal.impl.builtins.SuspendFunctionTypesKt;
 import me.hugo.thankmaslobby.blocks.StaticBlocks;
-import me.hugo.thankmaslobby.commands.EasterEggNPCCommand;
+import me.hugo.thankmaslobby.commands.EasterEggNpcCommand;
 import me.hugo.thankmaslobby.commands.SecretMenuCommand;
 import me.hugo.thankmaslobby.commands.StopCommand;
 import me.hugo.thankmaslobby.commands.TestCommand;
-import me.hugo.thankmaslobby.config.EasterEggNPCManager;
+import me.hugo.thankmaslobby.config.EasterEggNpcManager;
 import me.hugo.thankmaslobby.cosmetics.menus.CosmeticsMenu;
-import me.hugo.thankmaslobby.entities.NPC;
 import me.hugo.thankmaslobby.entities.TextNPC;
 import me.hugo.thankmaslobby.events.*;
 import me.hugo.thankmaslobby.games.GameSelectorMenu;
-import me.hugo.thankmaslobby.labelholograms.LabelHologram;
 import me.hugo.thankmaslobby.labelholograms.LabelHolograms;
-import me.hugo.thankmaslobby.lobbynpc.EasterEggNPC;
 import me.hugo.thankmaslobby.lobbynpc.ServerJoinNPC;
 import me.hugo.thankmaslobby.player.PlayerManager;
 import me.hugo.thankmaslobby.secrets.SecretCategoryManager;
@@ -68,7 +64,7 @@ public class ThankmasLobby {
     private SecretCategoryManager secretCategoryManager;
     private OptionManager optionManager;
 
-    private EasterEggNPCManager easterEggNPCManager;
+    private EasterEggNpcManager easterEggNPCManager;
 
     private Pos spawnLocation;
 
@@ -118,14 +114,14 @@ public class ThankmasLobby {
         commandManager.register(new SecretMenuCommand());
         commandManager.register(new TestCommand());
         commandManager.register(new StopCommand());
-        commandManager.register(new EasterEggNPCCommand("addeastereggnpc"));
+        commandManager.register(new EasterEggNpcCommand("addeastereggnpc"));
 
         minecraftServer.start("0.0.0.0", 25565);
 
         for (ServerJoinNPC lobbyNPC : ServerJoinNPC.values())
             System.out.println("[Server NPC] '" + lobbyNPC.getServerName() + "' has been registered!");
 
-        getInstance().easterEggNPCManager = new EasterEggNPCManager();
+        getInstance().easterEggNPCManager = new EasterEggNpcManager();
         getInstance().secretCategoryManager = new SecretCategoryManager();
 
         for (LabelHolograms labelHologram : LabelHolograms.values())
@@ -247,7 +243,7 @@ public class ThankmasLobby {
         return secretCategoryManager;
     }
 
-    public EasterEggNPCManager getEasterEggNPCManager() {
+    public EasterEggNpcManager getEasterEggNPCManager() {
         return easterEggNPCManager;
     }
 }

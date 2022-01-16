@@ -54,7 +54,7 @@ public class PaginatedGUI {
     public void addInventoryCondition(InventoryCondition inventoryCondition) {
         inventoryConditions.add(inventoryCondition);
 
-        for(Inventory inventory : pages) {
+        for (Inventory inventory : pages) {
             inventory.addInventoryCondition(inventoryCondition);
         }
     }
@@ -90,7 +90,7 @@ public class PaginatedGUI {
         int slot = slots.get(index);
 
         if (inventory.getItemStack(slot) == null || inventory.getItemStack(slot).getMaterial() != Material.AIR) {
-            while (inventory.getItemStack(slot).getMaterial() != Material.AIR) {
+            while (inventory.getItemStack(slot) == null || inventory.getItemStack(slot).getMaterial() != Material.AIR) {
                 index++;
                 slot = slots.get(index);
             }
@@ -112,7 +112,7 @@ public class PaginatedGUI {
             List<Integer> slotList = pageFormat.getFormatSlots();
             int lastSlot = slotList.get(slotList.size() - 1);
 
-            if (menuHandler.getItemStack(lastSlot).getMaterial() == Material.AIR) {
+            if (menuHandler.getItemStack(lastSlot) == null || menuHandler.getItemStack(lastSlot).getMaterial() == Material.AIR) {
                 i = addItem(menuHandler, icon);
                 break;
             } else if (pages.size() - 1 == index) {
@@ -152,7 +152,8 @@ public class PaginatedGUI {
                 ItemStack.of(page == 1 && previousMenu == null ? Material.ACACIA_DOOR : Material.ARROW)
                         .withDisplayName(Component.text((page == 1 ? (previousMenu == null ? "Close" : "Go Back") : "Page " + index), NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false)));
 
-        for(InventoryCondition inventoryCondition : inventoryConditions) newPage.addInventoryCondition(inventoryCondition);
+        for (InventoryCondition inventoryCondition : inventoryConditions)
+            newPage.addInventoryCondition(inventoryCondition);
 
         if (index >= 1) {
             Inventory lastMenuHandler = pages.get(previousIndex);
@@ -162,28 +163,27 @@ public class PaginatedGUI {
             lastMenuHandler.addInventoryCondition((player, i, clickType, inventoryConditionResult) -> {
                 if (i == lastMenuHandler.getSize() - 4) {
                     player.openInventory(pages.get(thatIndex));
-                }
-            });
-        } else {
-            newPage.addInventoryCondition((player, i, clickType, inventoryConditionResult) -> {
-                int backButtonSlot = newPage.getSize() - 6;
-
-                if (i == backButtonSlot) {
-                    if (page == 1) {
-                        if (previousMenu == null) {
-                            player.closeInventory();
-                        } else {
-                            player.openInventory(previousMenu);
-                        }
-                    } else {
-                        player.openInventory(pages.get(previousIndex));
-                    }
                     player.playSound(Sound.sound(Key.key("minecraft:block.wooden_button.click_on"), Sound.Source.AMBIENT, 1.0f, 1.0f));
                 }
-
-                inventoryConditionResult.setCancel(true);
             });
         }
+
+        newPage.addInventoryCondition((player, i, clickType, inventoryConditionResult) -> {
+            int backButtonSlot = newPage.getSize() - 6;
+
+            if (i == backButtonSlot) {
+                if (page == 1) {
+
+                    if (previousMenu == null) player.closeInventory();
+                    else player.openInventory(previousMenu);
+
+                } else player.openInventory(pages.get(previousIndex));
+
+                player.playSound(Sound.sound(Key.key("minecraft:block.wooden_button.click_on"), Sound.Source.AMBIENT, 1.0f, 1.0f));
+            }
+
+            inventoryConditionResult.setCancel(true);
+        });
 
         pages.add(newPage);
 

@@ -24,19 +24,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
-public class EasterEggNPC {
-
-    /*KWEEBEC_CORNER(0, "Kweebec Corner", PlayerSkin.fromUsername("KweebecCorner"), new Pos(-31.7, 79, 38.7, 46, 10), "Stay safe and keep free!"),
-    EFS3(1, "EFS3", PlayerSkin.fromUsername("EFS3"), new Pos(11, 40, 13.5, 140, 0), "ඞ", "sus"),
-    BUDDHACAT(2, "BuddhaCat", PlayerSkin.fromUsername("BuddhaCat"), new Pos(41.5, 65, -10.5, 70, 0), "Remember to ask me what phrase I want for my NPC!"),
-    CANADIAN_FLASH(3, "CanadianFlash", PlayerSkin.fromUsername("CanadianFlash"), new Pos(10.5, 40, 16.5, 160, 0), "I'm CanadianFlash and I'm always late!"),
-    PROPZIE(4, "Propzie", PlayerSkin.fromUsername("Propzie"), new Pos(-5.5, 40, 32.5, 160, 0), "Propzie!"),
-    POWERBYTE7(5, "Powerbyte7", PlayerSkin.fromUsername("Powerbyte7"), new Pos(26.5, 68, 3.5, 50, 0),
-            "I don't know why people say I hate Kweebecs. I just have a passion for pyrotechnics, that's completely different!"),
-    BLITZ_STRIKE(5, "BlitzStrike_", PlayerSkin.fromUsername("BlitzStrike_"), new Pos(-5.5, 67, 53.5, 160, 20), "Hello!"),
-    NOXY(6, "NoxyD", PlayerSkin.fromUsername("NoxyD"), new Pos(29.5, 78, 42.5, 120, 20), "Hello!"),
-    ACORN(7, "TheCrispyAcorn", PlayerSkin.fromUsername("TheCrispyAcorn"), new Pos(-34.5, 70, 58.5, 90, 0),
-            "If I wait any longer I might turn into a tree.");*/
+public class EasterEggNpc {
 
     private int id;
     private String name;
@@ -51,7 +39,7 @@ public class EasterEggNPC {
     private transient PlayerSkin npcSkin;
     private transient ItemStack lockedState, unlockedState;
 
-    public EasterEggNPC(int id, String name, Pos npcPosition, String... dialogue) {
+    public EasterEggNpc(int id, String name, Pos npcPosition, String... dialogue) {
         this.id = id;
         this.name = name;
         this.npcSkin =  PlayerSkin.fromUsername(name);
@@ -66,7 +54,7 @@ public class EasterEggNPC {
         this.pitch = npcPosition.pitch();
     }
 
-    public EasterEggNPC(int id, String name, PlayerSkin npcSkin, Pos npcPosition, String... dialogue) {
+    public EasterEggNpc(int id, String name, PlayerSkin npcSkin, Pos npcPosition, String... dialogue) {
         this.id = id;
         this.name = name;
         this.npcSkin = npcSkin;
@@ -81,7 +69,7 @@ public class EasterEggNPC {
         this.pitch = npcPosition.pitch();
     }
 
-    public void spawnNPC() {
+    public void spawnNpc() {
         Instance instance = MinecraftServer.getInstanceManager().getInstances().iterator().next();
 
         if (this.npcSkin == null || this.npcPosition == null) {
@@ -90,7 +78,6 @@ public class EasterEggNPC {
         }
 
         this.npc = new TextNPC(instance, this.npcPosition, this.npcSkin, TriState.TRUE, getNPCInteraction(), Component.text(this.name, NamedTextColor.AQUA), Component.text("CLICK", NamedTextColor.YELLOW).decorate(TextDecoration.BOLD));
-
         buildMenuIcons();
     }
 
@@ -196,5 +183,9 @@ public class EasterEggNPC {
 
     public String getName() {
         return name;
+    }
+
+    public TextNPC getNpc() {
+        return npc;
     }
 }

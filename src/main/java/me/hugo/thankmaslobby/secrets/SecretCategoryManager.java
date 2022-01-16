@@ -3,12 +3,9 @@ package me.hugo.thankmaslobby.secrets;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import me.hugo.thankmaslobby.ThankmasLobby;
-import me.hugo.thankmaslobby.lobbynpc.EasterEggNPC;
 import me.hugo.thankmaslobby.player.GamePlayer;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
-
-import java.util.HashMap;
 
 public class SecretCategoryManager {
 

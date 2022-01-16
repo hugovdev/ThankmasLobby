@@ -1,8 +1,8 @@
 package me.hugo.thankmaslobby.player;
 
 import me.hugo.thankmaslobby.ThankmasLobby;
-import me.hugo.thankmaslobby.config.EasterEggNPCManager;
-import me.hugo.thankmaslobby.lobbynpc.EasterEggNPC;
+import me.hugo.thankmaslobby.config.EasterEggNpcManager;
+import me.hugo.thankmaslobby.lobbynpc.EasterEggNpc;
 import me.hugo.thankmaslobby.player.rank.Rank;
 import me.hugo.thankmaslobby.secrets.SecretCategory;
 import me.hugo.thankmaslobby.secrets.SecretCategoryManager;
@@ -44,7 +44,7 @@ public class GamePlayer {
     Inventory settingsMenu;
 
     PaginatedGUI secretsMenu;
-    List<EasterEggNPC> unlockedNPCs = new ArrayList<>();
+    List<EasterEggNpc> unlockedNPCs = new ArrayList<>();
     PaginatedGUI unlockedNPCMenu;
 
     public GamePlayer(Player player, ThankmasLobby main) {
@@ -127,17 +127,17 @@ public class GamePlayer {
     }
 
     private void initUnlockedSecrets() {
-        EasterEggNPCManager npcManager = this.main.getEasterEggNPCManager();
+        EasterEggNpcManager npcManager = this.main.getEasterEggNPCManager();
         unlockedNPCMenu = new PaginatedGUI(InventoryType.CHEST_4_ROW, ItemStack.of(Material.IRON_HELMET).withDisplayName(Component.text("Secret NPCs", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false)),
                 "Secret NPCs", PaginatedGUI.PageFormat.TWO_ROWS, secretsMenu.getPages().get(0));
 
-        for (EasterEggNPC easterEggNPC : npcManager.getEasterEggNPCs())
+        for (EasterEggNpc easterEggNPC : npcManager.getEasterEggNPCs())
             unlockedNPCMenu.addItem(unlockedNPCs.contains(easterEggNPC) ? easterEggNPC.getUnlockedState() : easterEggNPC.getLockedState());
 
         unlockedNPCMenu.addInventoryCondition((playerWhoClicked, i, clickType, inventoryConditionResult) -> {
             if (inventoryConditionResult.getClickedItem().getMaterial() != Material.PLAYER_HEAD) return;
 
-            for (EasterEggNPC easterEggNPC : npcManager.getEasterEggNPCs()) {
+            for (EasterEggNpc easterEggNPC : npcManager.getEasterEggNPCs()) {
                 if (inventoryConditionResult.getClickedItem() == easterEggNPC.getUnlockedState()) {
                     playerWhoClicked.closeInventory();
 
@@ -240,7 +240,7 @@ public class GamePlayer {
         return secretsMenu;
     }
 
-    public List<EasterEggNPC> getUnlockedNPCs() {
+    public List<EasterEggNpc> getUnlockedNPCs() {
         return unlockedNPCs;
     }
 
